@@ -1,5 +1,5 @@
 /**
- * Local Development Server for condo-booking-app
+ * Local Development Server for 418-tagaytay-web-app
  * 
  * Emulates Google Apps Script HtmlService template evaluation and
  * provides a mock implementation of window.google.script.run for
