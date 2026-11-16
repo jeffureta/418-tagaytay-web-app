@@ -16,6 +16,16 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
+  // Route to In-Unit QR Appliance Guide (?view=qr) or standard Booking Web App
+  var view = (e && e.parameter && e.parameter.view) || '';
+  if (view === 'qr') {
+    var qrTemplate = HtmlService.createTemplateFromFile('QrGuide');
+    return qrTemplate.evaluate()
+      .setTitle('Unit 418 Serin East Tagaytay - In-Unit Appliance & Guest Guide')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover');
+  }
+
   // Serve the interactive web app HTML interface
   const template = HtmlService.createTemplateFromFile('Index');
   return template.evaluate()

@@ -14,6 +14,15 @@
     --success-text: #166534;
     --card-bg: #ffffff;
     --tagaytay-green: #047857;
+
+    /* Responsive Architecture Tokens */
+    --container-max-width: 1280px;
+    --space-xs: clamp(4px, 1vw, 6px);
+    --space-sm: clamp(8px, 1.5vw, 12px);
+    --space-md: clamp(14px, 2vw, 20px);
+    --space-lg: clamp(20px, 3vw, 32px);
+    --space-xl: clamp(28px, 4vw, 48px);
+    --font-heading: clamp(1.25rem, 2.5vw, 2rem);
   }
 
   * {
@@ -26,11 +35,12 @@
   body {
     background-color: var(--bg);
     color: var(--text);
-    padding: 16px;
+    padding: var(--space-md);
     line-height: 1.5;
   }
 
-  @media (max-width: 580px) {
+  /* 1. Mobile Phone (<600px) */
+  @media (max-width: 599px) {
     body {
       padding: 8px 8px 88px 8px;
     }
@@ -54,13 +64,15 @@
   }
 
   .booking-wrapper {
-    max-width: 680px;
+    width: 100%;
+    max-width: var(--container-max-width);
     margin: 0 auto;
     border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     background: var(--card-bg);
+    container-type: inline-size;
   }
 
   .hero-banner {
@@ -74,7 +86,7 @@
   }
 
   .hero-banner h1 {
-    font-size: 24px;
+    font-size: var(--font-heading);
     font-weight: 700;
     letter-spacing: -0.02em;
   }
@@ -93,7 +105,7 @@
   }
 
   .booking-main {
-    padding: 24px;
+    padding: var(--space-lg);
   }
 
   .sr-only {
@@ -117,7 +129,52 @@
     gap: 16px;
   }
 
-  @media (max-width: 580px) {
+  /* 2. Foldables & Small Devices (600px - 768px) */
+  @media (min-width: 600px) {
+    .booking-wrapper {
+      max-width: 680px;
+    }
+  }
+
+  /* 3. Tablets (768px - 1024px) */
+  @media (min-width: 768px) {
+    .booking-wrapper {
+      max-width: 900px;
+    }
+    .booking-layout-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .booking-sticky-panel {
+      position: sticky;
+      top: 24px;
+    }
+  }
+
+  /* 4. Laptops (1024px - 1440px) */
+  @media (min-width: 1024px) {
+    .booking-wrapper {
+      max-width: 1140px;
+    }
+    .booking-layout-grid {
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 32px;
+    }
+  }
+
+  /* 5. Desktops & Ultra-wides (>=1440px) */
+  @media (min-width: 1440px) {
+    .booking-wrapper {
+      max-width: var(--container-max-width);
+    }
+    .booking-main {
+      padding: 36px;
+    }
+  }
+
+  @media (max-width: 599px) {
     .form-row {
       grid-template-columns: 1fr;
     }
@@ -1039,5 +1096,240 @@
     .ai-chat-form {
       padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     }
+  }
+
+  /* Responsive Adaptation for AI Concierge Chat Drawer on Tablets/Laptops/Desktops */
+  @media (min-width: 768px) {
+    .ai-chat-drawer {
+      width: 380px;
+      height: 560px;
+      right: 24px;
+      bottom: 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  /* Responsive Styles for In-Unit QR Appliance Guide (QrGuide.html) */
+  .qr-badge {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 4px 10px;
+    background: rgba(2, 132, 199, 0.85);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 9999px;
+    margin-bottom: 8px;
+  }
+
+  .qr-nav-pills {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px var(--space-md);
+    background: #ffffff;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .qr-pill-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 14px;
+    background: #f1f5f9;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 9999px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .qr-pill-link:hover {
+    background: #e2e8f0;
+    color: var(--primary);
+  }
+
+  .qr-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .qr-card {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .qr-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .qr-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .qr-card-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .qr-card-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .wifi-credentials-box {
+    background: #f8fafc;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .wifi-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .wifi-label {
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .wifi-value {
+    font-family: monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    background: #e0f2fe;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .btn-copy-wifi {
+    min-height: 44px;
+    background: var(--primary);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    margin-top: 6px;
+  }
+
+  .btn-copy-wifi:hover {
+    background: var(--primary-hover);
+  }
+
+  .qr-copy-feedback {
+    display: none;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--success-text);
+  }
+
+  .qr-steps-list, .qr-tips-list {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .qr-note-box {
+    margin-top: 14px;
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #92400e;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .qr-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .qr-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .qr-check-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    min-height: 20px;
+    accent-color: var(--primary);
+    margin-top: 2px;
+  }
+
+  .endorsement-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 14px;
+  }
+
+  .btn-endorsement {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
+    margin-top: 10px;
+    background: var(--tagaytay-green);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.15s ease;
+  }
+
+  .btn-endorsement:hover {
+    background: #065f46;
+  }
+
+  .qr-footer {
+    padding: 20px var(--space-md);
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    background: #f8fafc;
+  }
+
+  .qr-footer-sub {
+    margin-top: 4px;
   }
 </style>
