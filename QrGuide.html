@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Unit 418 Serin East Tagaytay • In-Unit Appliance & Guest Guide</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <?!= include('Styles'); ?>
+</head>
+<body class="qr-guide-body">
+
+<a href="#mainContent" class="skip-link">Skip to appliance guide</a>
+
+<div class="booking-wrapper qr-wrapper" id="mainContent">
+  <!-- Hero Banner -->
+  <header class="hero-banner qr-hero">
+    <div class="qr-badge">📍 IN-UNIT GUEST DIRECTORY</div>
+    <h1>Unit 418 • Serin East Tagaytay</h1>
+    <p class="hero-location">Tower 1 • Silang Crossing East, Tagaytay City, Cavite</p>
+    <p class="hero-subtext">2-Bedroom In-Unit Appliance Instructions & House Guide</p>
+  </header>
+
+  <!-- Navigation Quick Pills -->
+  <nav class="qr-nav-pills" aria-label="Quick jump appliance navigation">
+    <a href="#wifiSection" class="qr-pill-link">📶 Wi-Fi</a>
+    <a href="#smartLockSection" class="qr-pill-link">🔐 Smart Lock</a>
+    <a href="#inductionSection" class="qr-pill-link">🍳 Induction Stove</a>
+    <a href="#waterHeaterSection" class="qr-pill-link">🚿 Water Heater</a>
+    <a href="#amenitiesSection" class="qr-pill-link">🏊 Amenities</a>
+    <a href="#checkoutSection" class="qr-pill-link">📋 Checkout</a>
+  </nav>
+
+  <main class="booking-main qr-main">
+    <!-- Fiber Wi-Fi Card -->
+    <section id="wifiSection" class="qr-card">
+      <div class="qr-card-header">
+        <span class="qr-icon" aria-hidden="true">📶</span>
+        <div>
+          <h2>High-Speed Fiber Wi-Fi</h2>
+          <p class="qr-card-sub">Converge Fiber 100+ Mbps Unlimited</p>
+        </div>
+      </div>
+      <div class="wifi-credentials-box">
+        <div class="wifi-field">
+          <span class="wifi-label">Network (SSID):</span>
+          <span class="wifi-value" id="wifiSsid">Serin418_Guest_5G</span>
+        </div>
+        <div class="wifi-field">
+          <span class="wifi-label">Password:</span>
+          <span class="wifi-value" id="wifiPass">TagaytayStay418!</span>
+        </div>
+        <button type="button" class="btn-copy-wifi" onclick="copyWifiPassword()">
+          📋 Copy Wi-Fi Password
+        </button>
+        <div id="copyFeedback" class="qr-copy-feedback" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- Keyless Smart Lock Entry Card -->
+    <section id="smartLockSection" class="qr-card">
+      <div class="qr-card-header">
+        <span class="qr-icon" aria-hidden="true">🔐</span>
+        <div>
+          <h2>Smart Lock & Keyless Check-In</h2>
+          <p class="qr-card-sub">Check-In: 2:00 PM • Check-Out: 12:00 NN</p>
+        </div>
+      </div>
+      <div class="qr-card-content">
+        <ol class="qr-steps-list">
+          <li><strong>Activate Keypad:</strong> Touch the black touchscreen with the palm of your hand or fingers until the digits light up.</li>
+          <li><strong>Enter PIN:</strong> Key in your assigned 6-digit access code sent via SMS/Email followed by the <strong>#</strong> key.</li>
+          <li><strong>Unlocking:</strong> The motor will beep and chime twice. Turn the handle downward to open.</li>
+          <li><strong>Auto-Lock:</strong> The door locks automatically after 5 seconds upon closing. Ensure the door is pushed fully shut.</li>
+        </ol>
+        <div class="qr-note-box">
+          ⚠️ <strong>Lost Code?</strong> Contact Unit 418 Caretaker (+63 917 841 8418) or tap the AI Concierge below for instant PIN re-issuance.
+        </div>
+      </div>
+    </section>
+
+    <!-- Induction Cooker / Stove Card -->
+    <section id="inductionSection" class="qr-card">
+      <div class="qr-card-header">
+        <span class="qr-icon" aria-hidden="true">🍳</span>
+        <div>
+          <h2>Induction Cooker & Kitchenette</h2>
+          <p class="qr-card-sub">Single-burner induction stove operation</p>
+        </div>
+      </div>
+      <div class="qr-card-content">
+        <ul class="qr-tips-list">
+          <li><strong>Place Compatible Pan First:</strong> Only use the provided stainless induction pots and pans stored in the lower cabinet. The burner will beep and display <code>E0</code> if turned on without a pot.</li>
+          <li><strong>Power On:</strong> Press the <strong>ON/OFF</strong> button, then select <strong>HEAT</strong> or <strong>FRY</strong>.</li>
+          <li><strong>Adjust Heat:</strong> Use the <strong>+</strong> and <strong>-</strong> touch keys (levels 200W – 1800W).</li>
+          <li><strong>Range Hood:</strong> Always switch on the overhead exhaust hood when cooking to keep Tagaytay mountain air crisp.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Shower Water Heater Card -->
+    <section id="waterHeaterSection" class="qr-card">
+      <div class="qr-card-header">
+        <span class="qr-icon" aria-hidden="true">🚿</span>
+        <div>
+          <h2>Shower Water Heater</h2>
+          <p class="qr-card-sub">Instant multi-point water heater</p>
+        </div>
+      </div>
+      <div class="qr-card-content">
+        <p>Stay warm in cool Tagaytay weather with instant hot showers:</p>
+        <ol class="qr-steps-list">
+          <li>Ensure the dedicated wall switch (labeled <strong>WATER HEATER</strong> outside the bathroom door) is illuminated <strong>ON</strong>.</li>
+          <li>Turn on the shower faucet to initiate water flow.</li>
+          <li>Adjust the temperature dial on the heater unit: Medium (10 o'clock position) is comfortable for most guests.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Amenities & Building Rules -->
+    <section id="amenitiesSection" class="qr-card">
+      <div class="qr-card-header">
+        <span class="qr-icon" aria-hidden="true">🏊</span>
+        <div>
+          <h2>Building Amenities & Parking</h2>
+          <p class="qr-card-sub">Serin East Tower 1 facilities</p>
+        </div>
+      </div>
+      <div class="qr-card-content">
+        <ul class="qr-tips-list">
+          <li><strong>Swimming Pools:</strong> Ground Floor amenity deck. Open Tuesday to Sunday, 6:00 AM – 8:00 PM (Closed Mondays for maintenance). Present registered guest pass.</li>
+          <li><strong>Covered Parking:</strong> Dedicated reserved basement slot available at ₱350/night. Inquire via AI Concierge for allocation.</li>
+          <li><strong>Trash Disposal:</strong> The refuse room is located down the hallway to the left of the elevators.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Checkout Checklist & Clearance Card -->
+    <section id="checkoutSection" class="qr-card">
+      <div class="qr-card-header">
+        <span class="qr-icon" aria-hidden="true">📋</span>
+        <div>
+          <h2>Check-out Checklist & Endorsement Gate</h2>
+          <p class="qr-card-sub">Prompt 12:00 NN turnover for incoming guests</p>
+        </div>
+      </div>
+      <div class="qr-card-content">
+        <div class="qr-checklist">
+          <label class="qr-check-item">
+            <input type="checkbox" aria-label="Turn off air conditioning and lights">
+            <span>Turn off all air conditioning units, television, and shower heater.</span>
+          </label>
+          <label class="qr-check-item">
+            <input type="checkbox" aria-label="Check personal belongings">
+            <span>Check drawers and wardrobes for personal phone chargers, jewelry, and IDs.</span>
+          </label>
+          <label class="qr-check-item">
+            <input type="checkbox" aria-label="Tie trash bags">
+            <span>Dispose of food refuse or tie trash bags securely inside the unit bin.</span>
+          </label>
+          <label class="qr-check-item">
+            <input type="checkbox" aria-label="Firmly close smart lock door">
+            <span>Close the main door firmly until the smart lock chimes locked.</span>
+          </label>
+        </div>
+
+        <div class="endorsement-box">
+          <p><strong>Property Clearance Status:</strong> Pre-arrival guest registration and security clearance are managed through our official clearance gate:</p>
+          <a href="https://serineasttagaytayendorsement.carrd.co/" target="_blank" rel="noopener noreferrer" class="btn-endorsement">
+            🔗 Open Pre-Arrival Endorsement Clearance Gate
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="qr-footer">
+    <p>Unit 418 Serin East Tagaytay • Managed by Tagaytay Staycation Ops</p>
+    <p class="qr-footer-sub">Questions? Tap the concierge icon in the bottom corner for 24/7 trilingual assistance.</p>
+  </footer>
+</div>
+
+<!-- Floating AI Concierge Launcher for QR Guide -->
+<button type="button" id="aiChatLauncher" class="ai-launcher-btn" onclick="toggleAiChatDrawer(true)" aria-label="Open 24/7 AI Concierge Assistant">
+  <span class="ai-launcher-icon" aria-hidden="true">💬</span>
+  <span class="ai-launcher-label">Ask Unit 418 Concierge</span>
+</button>
+
+<!-- Slide-over / Modal Chat Drawer (Modular) -->
+<div id="aiChatDrawer" class="ai-chat-drawer" role="dialog" aria-modal="true" aria-labelledby="aiChatTitle" style="display: none;">
+  <div class="ai-chat-header">
+    <div class="ai-chat-header-info">
+      <span class="ai-avatar" aria-hidden="true">🤖</span>
+      <div>
+        <h3 id="aiChatTitle" class="ai-chat-title">Unit 418 Concierge</h3>
+        <p class="ai-chat-subtitle">Trilingual Guest Assistant (English / Tagalog / Taglish)</p>
+      </div>
+    </div>
+    <button type="button" id="aiChatCloseBtn" class="ai-chat-close-btn" onclick="toggleAiChatDrawer(false)" aria-label="Close Assistant">
+      ✕
+    </button>
+  </div>
+
+  <div id="aiChatMessages" class="ai-chat-messages" role="log" aria-live="polite">
+    <div class="ai-msg ai-msg-bot">
+      <p>Hello! Welcome to Unit 418 Serin East Tagaytay! Kamusta po! Need help with Wi-Fi, the induction cooker, water heater, parking, or check-out? Just ask me anytime!</p>
+    </div>
+  </div>
+
+  <form id="aiChatForm" class="ai-chat-form" onsubmit="handleAiChatSubmit(event)">
+    <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="Ask about appliances, wifi, checkout..." aria-label="Chat message input" autocomplete="off" />
+    <button type="submit" id="aiChatSendBtn" class="ai-chat-send-btn" aria-label="Send message">Send</button>
+  </form>
+</div>
+
+<?!= include('Scripts'); ?>
+
+<script>
+  function copyWifiPassword() {
+    var pass = 'TagaytayStay418!';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(pass).then(function() {
+        showCopyFeedback('Copied password to clipboard!');
+      }).catch(function() {
+        fallbackCopy(pass);
+      });
+    } else {
+      fallbackCopy(pass);
+    }
+  }
+
+  function fallbackCopy(text) {
+    var tempInput = document.createElement('input');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    try {
+      document.execCommand('copy');
+      showCopyFeedback('Copied password to clipboard!');
+    } catch (e) {
+      showCopyFeedback('Password: ' + text);
+    }
+    document.body.removeChild(tempInput);
+  }
+
+  function showCopyFeedback(msg) {
+    var el = document.getElementById('copyFeedback');
+    if (el) {
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(function() {
+        el.textContent = '';
+        el.style.display = 'none';
+      }, 3000);
+    }
+  }
+</script>
+
+</body>
+</html>
