@@ -32,14 +32,14 @@ This guide explains how to deploy and share your calendar booking system using *
 
 1. Go to [script.google.com](https://script.google.com) and click **+ New project**.
 2. Rename the project at top left to: `Condo Booking Web App`.
-3. In `Code.gs`, paste all contents from [`Code.gs`](file:///Users/jeffureta/.gemini/antigravity/scratch/condo-booking-app/Code.gs).
+3. In `Code.gs`, paste all contents from [`Code.gs`](file:///Users/jeffureta/.gemini/antigravity/scratch/418-tagaytay-web-app/Code.gs).
 4. Update line 6 with your Calendar ID:
    ```javascript
    const CALENDAR_ID = 'YOUR_CALENDAR_ID@group.calendar.google.com';
    ```
 5. In the left panel, click **`+`** next to Files &rarr; select **HTML**.
 6. Name the file `Index` (it will become `Index.html`).
-7. Paste all contents from [`Index.html`](file:///Users/jeffureta/.gemini/antigravity/scratch/condo-booking-app/Index.html).
+7. Paste all contents from [`Index.html`](file:///Users/jeffureta/.gemini/antigravity/scratch/418-tagaytay-web-app/Index.html).
 8. Click **Save** (floppy disk icon).
 
 ---
