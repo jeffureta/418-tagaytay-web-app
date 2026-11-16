@@ -7,7 +7,6 @@ import vm from 'node:vm';
 const SCRIPTS_PATH = path.resolve('Scripts.html');
 const STYLES_PATH = path.resolve('Styles.html');
 const INDEX_PATH = path.resolve('Index.html');
-const CODE_JS_PATH = path.resolve('Code.js');
 const CODE_GS_PATH = path.resolve('Code.gs');
 
 function simulateHtmlServicePreprocess(rawContent) {
@@ -27,13 +26,11 @@ describe('Mobile-Friendly UI & TDD Engine Contracts', () => {
   const rawHtml = fs.readFileSync(SCRIPTS_PATH, 'utf8');
   const rawStyles = fs.readFileSync(STYLES_PATH, 'utf8');
   const rawIndex = fs.readFileSync(INDEX_PATH, 'utf8');
-  const rawCodeJs = fs.readFileSync(CODE_JS_PATH, 'utf8');
   const rawCodeGs = fs.readFileSync(CODE_GS_PATH, 'utf8');
 
   describe('Viewport and CSS Static Contracts', () => {
-    test('Index.html, Code.js, and Code.gs include viewport-fit=cover', () => {
+    test('Index.html and Code.gs include viewport-fit=cover', () => {
       assert.match(rawIndex, /viewport-fit=cover/, 'Index.html must have viewport-fit=cover');
-      assert.match(rawCodeJs, /viewport-fit=cover/, 'Code.js must have viewport-fit=cover');
       assert.match(rawCodeGs, /viewport-fit=cover/, 'Code.gs must have viewport-fit=cover');
     });
 

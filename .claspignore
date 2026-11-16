@@ -1,9 +1,10 @@
 **/**
 !appsscript.json
-!Code.js
-!Config.js
-!BookingService.js
-!NotificationService.js
+!Code.gs
+!Config.gs
+!BookingService.gs
+!NotificationService.gs
+!SyncEngine.gs
 !Index.html
 !QrGuide.html
 !Styles.html
