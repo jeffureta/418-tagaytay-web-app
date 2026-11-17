@@ -264,11 +264,139 @@
   /* ==========================================================================
      APP LIFECYCLE & AVAILABILITY
      ========================================================================== */
+  /* Multi-Tier SWR Availability Cache & Circuit Breaker */
+  var CalendarAvailabilityCache = {
+    KEY: 'serin418_avail_v1',
+    TTL_MS: 300000, // 5 min in RAM / localStorage
+    memoryData: null,
+    lastFetchedAt: 0,
+    failures: 0,
+    circuitOpenUntil: 0,
+    get: function() {
+      var now = Date.now();
+      if (this.memoryData && (now - this.lastFetchedAt < this.TTL_MS)) {
+        return this.memoryData;
+      }
+      try {
+        if (typeof localStorage !== 'undefined') {
+          var item = localStorage.getItem(this.KEY);
+          if (item) {
+            var parsed = JSON.parse(item);
+            if (parsed && (now - parsed.timestamp < this.TTL_MS * 12)) { // 1 hour persistent
+              this.memoryData = parsed.busyDates;
+              this.lastFetchedAt = parsed.timestamp;
+              return this.memoryData;
+            }
+          }
+        }
+      } catch (e) {}
+      return this.memoryData;
+    },
+    set: function(busyDates) {
+      this.memoryData = busyDates;
+      this.lastFetchedAt = Date.now();
+      this.failures = 0;
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(this.KEY, JSON.stringify({
+            timestamp: this.lastFetchedAt,
+            busyDates: busyDates
+          }));
+        }
+      } catch (e) {}
+    },
+    recordFailure: function() {
+      this.failures++;
+      if (this.failures >= 3) {
+        this.circuitOpenUntil = Date.now() + 30000; // Open circuit for 30s
+      }
+    },
+    isCircuitOpen: function() {
+      return Date.now() < this.circuitOpenUntil;
+    }
+  };
+
   function bootstrapApp() {
     var inInput = document.getElementById('checkInDate');
     var outInput = document.getElementById('checkOutDate');
     if (inInput) inInput.min = todayStr;
     if (outInput) outInput.min = todayStr;
+
+    initCalendarWebComponentBridge();
+    fetchCalendarAvailabilitySWR();
+  }
+
+  function initCalendarWebComponentBridge() {
+    var cal = document.getElementById('condoBookingCalendar');
+    if (!cal) return;
+
+    // Load cached availability immediately for sub-50ms render
+    var cached = CalendarAvailabilityCache.get();
+    if (cached && cal.state && cal.render) {
+      cal.state.busyDates = new Set(cached);
+      cal.render();
+    }
+
+    cal.addEventListener('date-selected', function(e) {
+      var inInput = document.getElementById('checkInDate');
+      var outInput = document.getElementById('checkOutDate');
+      if (e.detail && e.detail.checkIn && inInput) {
+        inInput.value = e.detail.checkIn;
+      }
+      if (e.detail && e.detail.checkOut && outInput) {
+        outInput.value = e.detail.checkOut;
+        outInput.min = inInput ? inInput.value : todayStr;
+      }
+      onDateInputChange();
+    });
+
+    cal.addEventListener('quote-updated', function(e) {
+      if (e.detail) {
+        currentStayQuote = e.detail;
+      }
+    });
+
+    cal.addEventListener('booking-submitted', function(e) {
+      var form = document.getElementById('bookingForm');
+      if (form) {
+        form.scrollIntoView({ behavior: 'smooth' });
+        var nameInput = document.getElementById('guestName');
+        if (nameInput) nameInput.focus();
+      }
+    });
+  }
+
+  function fetchCalendarAvailabilitySWR() {
+    if (CalendarAvailabilityCache.isCircuitOpen()) {
+      return; // Circuit open, gracefully degrade to cached availability
+    }
+
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      google.script.run
+        .withSuccessHandler(function(ranges) {
+          if (ranges && Array.isArray(ranges)) {
+            var busy = [];
+            ranges.forEach(function(r) {
+              var curr = new Date(r.from);
+              var end = new Date(r.to);
+              while (curr < end) {
+                busy.push(toIso(curr));
+                curr.setDate(curr.getDate() + 1);
+              }
+            });
+            CalendarAvailabilityCache.set(busy);
+            var cal = document.getElementById('condoBookingCalendar');
+            if (cal && cal.state && cal.render) {
+              cal.state.busyDates = new Set(busy);
+              cal.render();
+            }
+          }
+        })
+        .withFailureHandler(function() {
+          CalendarAvailabilityCache.recordFailure();
+        })
+        .getBookedRanges();
+    }
   }
 
   if (document.readyState === 'interactive' || document.readyState === 'complete') {
