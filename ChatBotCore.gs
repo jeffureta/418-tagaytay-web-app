@@ -78,7 +78,7 @@ var ChatBotSdk = (function() {
     "menu_book_stay": {
       "id": "menu_book_stay",
       "title": "Book a stay at Unit 418",
-      "message": "Welcome! Unit 418 is a premier 70sqm 2-Bedroom suite in Serin East Tagaytay (beside Ayala Malls Serin). When are you planning to visit?",
+      "message": "Hello! I'm here to help book your stay. When are you looking to stay with us?",
       "options": [
         {
           "id": "sub_dates_weekend",
@@ -109,7 +109,7 @@ var ChatBotSdk = (function() {
     "menu_book_guests": {
       "id": "menu_book_guests",
       "title": "Guest Capacity",
-      "message": "Unit 418 features 2 private bedrooms, a fully equipped kitchen, hot shower, and high-speed Wi-Fi. How many guests will be staying?",
+      "message": "How many guests?",
       "options": [
         {
           "id": "sub_guests_small",
@@ -173,7 +173,7 @@ var ChatBotSdk = (function() {
     "res_book_checkout": {
       "id": "res_book_checkout",
       "title": "Unit 418 Direct Stay Summary & Checkout",
-      "text": "✨ **Your Unit 418 Tagaytay Stay Summary**:\n\n• **Accommodation**: 2-Bedroom Suite (70 sqm), 2 Baths, Living Room & Balcony.\n• **Inclusions**: High-Speed Fiber Wi-Fi, Smart TV with Netflix, Induction Stove & Microwave for light cooking, Hot/Cold Shower.\n• **Direct Booking Advantage**: Zero OTA service fees + instant booking confirmation.\n• **Check-In/Out**: 2:00 PM check-in / 12:00 NN check-out.\n• **Optional Parking**: Covered tower slot at ₱350/night.\n\nReady to reserve? Click below to proceed to checkout and lock in your stay!",
+      "text": "**Your Unit 418 Tagaytay Stay Summary**:\n\n• **Accommodation**: 2-Bedroom Suite (70 sqm), 2 Baths, Living Room & Balcony.\n• **Inclusions**: High-Speed Fiber Wi-Fi, Smart TV with Netflix, Induction Stove & Microwave for light cooking, Hot/Cold Shower.\n• **Direct Booking Advantage**: Zero OTA service fees + instant booking confirmation.\n• **Check-In/Out**: 2:00 PM check-in / 12:00 NN check-out.\n• **Optional Parking**: Covered tower slot at ₱350/night.\n\nReady to reserve? Click below to proceed to checkout and lock in your stay!",
       "actions": [
         {
           "label": "Proceed to Checkout",
@@ -197,7 +197,7 @@ var ChatBotSdk = (function() {
     "res_parking": {
       "id": "res_parking",
       "title": "Parking Information",
-      "text": "🚗 **Parking Options at Unit 418 Serin East Tagaytay**:\n\n1. **Covered Tower Parking Slot**: Dedicated covered parking is available at **₱350 per night** (co-terminous with your 2:00 PM check-in to 12:00 NN check-out). Advance reservation with vehicle make, model, color, and plate number is required for building administration clearance.\n2. **Free Street Parking**: Free street parking is available along the street directly in front of Serin East Tower (first-come, first-served basis).\n\nWould you like to reserve the covered parking slot?",
+      "text": "**Parking Options at Unit 418 Serin East Tagaytay**:\n\n1. **Covered Tower Parking Slot**: Dedicated covered parking is available at **₱350 per night** (co-terminous with your 2:00 PM check-in to 12:00 NN check-out). Advance reservation with vehicle make, model, color, and plate number is required for building administration clearance.\n2. **Free Street Parking**: Free street parking is available along the street directly in front of Serin East Tower (first-come, first-served basis).\n\nWould you like to reserve the covered parking slot?",
       "actions": [
         {
           "label": "Reserve Covered Parking (₱350)",
@@ -216,7 +216,7 @@ var ChatBotSdk = (function() {
     "res_checkin": {
       "id": "res_checkin",
       "title": "Check-In, Check-Out & Smart Lock PIN",
-      "text": "🔑 **Standard Hours & Smart Lock Access**:\n\n• **Check-In**: 2:00 PM (14:00)\n• **Check-Out**: 12:00 NN (12:00)\n• **Caretaker Turnover Window**: 12:00 NN – 2:00 PM\n\n🔒 **Smart Lock PIN Release Gate**:\nYour unique 6-digit smart lock PIN is generated specifically for your reservation and is released **on your check-in day upon arrival**, once:\n1. Your building endorsement is submitted and verified via the Carrd link.\n2. The caretaker has completed the 12NN–2PM sanitization and unit setup.",
+      "text": "**Standard Hours & Smart Lock Access**:\n\n• **Check-In**: 2:00 PM (14:00)\n• **Check-Out**: 12:00 NN (12:00)\n• **Caretaker Turnover Window**: 12:00 NN – 2:00 PM\n\n **Smart Lock PIN Release Gate**:\nYour unique 6-digit smart lock PIN is generated specifically for your reservation and is released **on your check-in day upon arrival**, once:\n1. Your building endorsement is submitted and verified via the Carrd link.\n2. The caretaker has completed the 12NN–2PM sanitization and unit setup.",
       "actions": [
         {
           "label": "Open Endorsement Carrd",
@@ -233,7 +233,7 @@ var ChatBotSdk = (function() {
     "res_endorsement": {
       "id": "res_endorsement",
       "title": "Building Admin Endorsement Clearance",
-      "text": "📋 **Mandatory Serin East Building Administration Endorsement**:\n\nPer Serin East Tagaytay condominium security rules, all incoming guests must be officially endorsed before lobby entry.\n\n🔗 **Submission Link**: [serineasttagaytayendorsement.carrd.co](https://serineasttagaytayendorsement.carrd.co/)\n\n**Required Requirements**:\n1. One (1) Valid Government-issued ID of the Primary Guest.\n2. Full complete names of all accompanying guests.\n3. One (1) active mobile contact number.\n4. Vehicle plate & model details (if booking the ₱350/night covered parking slot).",
+      "text": "**Mandatory Serin East Building Administration Endorsement**:\n\nPer Serin East Tagaytay condominium security rules, all incoming guests must be officially endorsed before lobby entry.\n\n **Submission Link**: [serineasttagaytayendorsement.carrd.co](https://serineasttagaytayendorsement.carrd.co/)\n\n**Required Requirements**:\n1. One (1) Valid Government-issued ID of the Primary Guest.\n2. Full complete names of all accompanying guests.\n3. One (1) active mobile contact number.\n4. Vehicle plate & model details (if booking the ₱350/night covered parking slot).",
       "actions": [
         {
           "label": "Submit Endorsement Now",
@@ -250,7 +250,7 @@ var ChatBotSdk = (function() {
     "res_rules": {
       "id": "res_rules",
       "title": "Kitchen & Unit House Rules",
-      "text": "🍳 **Kitchen & House Rules for Unit 418**:\n\n• **Light Cooking**: Allowed! The kitchen is equipped with an induction cooktop, range hood, microwave, refrigerator, rice cooker, electric kettle, and cookware/utensils.\n• **Strict No-Smelly-Frying Rule**: Strictly **no frying of dried fish (tuyo, daing, tinapa)** or strong pungent foods to preserve unit freshness for incoming guests.\n• **Smoking & Vaping**: Strictly prohibited inside the unit and balcony per condominium regulations.\n• **Quiet Hours**: 10:00 PM to 8:00 AM.",
+      "text": "**Kitchen & House Rules for Unit 418**:\n\n• **Light Cooking**: Allowed! The kitchen is equipped with an induction cooktop, range hood, microwave, refrigerator, rice cooker, electric kettle, and cookware/utensils.\n• **Strict No-Smelly-Frying Rule**: Strictly **no frying of dried fish (tuyo, daing, tinapa)** or strong pungent foods to preserve unit freshness for incoming guests.\n• **Smoking & Vaping**: Strictly prohibited inside the unit and balcony per condominium regulations.\n• **Quiet Hours**: 10:00 PM to 8:00 AM.",
       "actions": [
         {
           "label": "Back to Menu",
@@ -262,7 +262,7 @@ var ChatBotSdk = (function() {
     "res_amenities": {
       "id": "res_amenities",
       "title": "Swimming Pool, Wi-Fi & Appliances",
-      "text": "🏊 **Amenities & Appliances**:\n\n• **Fiber Wi-Fi**: High-speed internet throughout the 2BR suite.\n• **Entertainment**: Smart TV with Netflix access.\n• **Bathroom**: Hot and cold shower heater + fresh guest towels.\n• **Swimming Pool**: Serin East outdoor pool access is managed by the building administration. Guest pool passes are paid directly to the admin office on the day of use.\n• **Air Conditioning**: Air-conditioned bedrooms and living area.",
+      "text": "**Amenities & Appliances**:\n\n• **Fiber Wi-Fi**: High-speed internet throughout the 2BR suite.\n• **Entertainment**: Smart TV with Netflix access.\n• **Bathroom**: Hot and cold shower heater + fresh guest towels.\n• **Swimming Pool**: Serin East outdoor pool access is managed by the building administration. Guest pool passes are paid directly to the admin office on the day of use.\n• **Air Conditioning**: Air-conditioned bedrooms and living area.",
       "actions": [
         {
           "label": "Back to Menu",
@@ -274,7 +274,7 @@ var ChatBotSdk = (function() {
     "res_contact": {
       "id": "res_contact",
       "title": "Contact Host & Caretaker",
-      "text": "📞 **Need immediate assistance?**\n\n• Our on-site caretaker coordinates unit preparation and turnovers between 12:00 NN and 2:00 PM.\n• You can reach host management directly via Messenger, Viber, WhatsApp, or phone call once your booking is confirmed.",
+      "text": "**Need immediate assistance?**\n\n• Our on-site caretaker coordinates unit preparation and turnovers between 12:00 NN and 2:00 PM.\n• You can reach host management directly via Messenger, Viber, WhatsApp, or phone call once your booking is confirmed.",
       "actions": [
         {
           "label": "Back to Menu",
@@ -286,7 +286,7 @@ var ChatBotSdk = (function() {
     "res_booking_direct": {
       "id": "res_booking_direct",
       "title": "Direct Booking",
-      "text": "🏷️ **Direct Booking Advantage**:\n\nBook directly through our website to secure instant reservation confirmation with no platform service fees!\n\n• **Payment Channels**: BDO / BPI Philippine Bank Transfer or GCash.\n• **Security Deposit**: ₱3,000 refundable security deposit (refunded promptly after checkout inspection).",
+      "text": "**Direct Booking Advantage**:\n\nBook directly through our website to secure instant reservation confirmation with no platform service fees!\n\n• **Payment Channels**: BDO / BPI Philippine Bank Transfer or GCash.\n• **Security Deposit**: ₱3,000 refundable security deposit (refunded promptly after checkout inspection).",
       "actions": [
         {
           "label": "Inquire for Dates",
@@ -305,7 +305,7 @@ var ChatBotSdk = (function() {
     "res_booking_ota": {
       "id": "res_booking_ota",
       "title": "OTA Booking Channels",
-      "text": "🌐 **We are also listed on major booking platforms**:\n\n• **Airbnb**: Instant booking with PayPal / Credit Card and Airbnb AirCover protection.\n• **Agoda & Booking.com**: Philippine bank and card payments accepted. (Note: Agoda direct bookings require a ₱3,000 refundable security deposit at check-in).",
+      "text": "**We are also listed on major booking platforms**:\n\n• **Airbnb**: Instant booking with PayPal / Credit Card and Airbnb AirCover protection.\n• **Agoda & Booking.com**: Philippine bank and card payments accepted. (Note: Agoda direct bookings require a ₱3,000 refundable security deposit at check-in).",
       "actions": [
         {
           "label": "Back to Booking Menu",
@@ -317,7 +317,7 @@ var ChatBotSdk = (function() {
     "res_booking_deposit": {
       "id": "res_booking_deposit",
       "title": "Security Deposit Policy",
-      "text": "💵 **Security Deposit Policies by Channel**:\n\n• **Direct Bookings & Agoda**: A **₱3,000 refundable security deposit** is collected upon check-in. This is refunded in full post-checkout once the caretaker completes the inventory inspection.\n• **Airbnb**: Covered under Airbnb AirCover protection (no upfront cash deposit collected).",
+      "text": "**Security Deposit Policies by Channel**:\n\n• **Direct Bookings & Agoda**: A **₱3,000 refundable security deposit** is collected upon check-in. This is refunded in full post-checkout once the caretaker completes the inventory inspection.\n• **Airbnb**: Covered under Airbnb AirCover protection (no upfront cash deposit collected).",
       "actions": [
         {
           "label": "Back to Booking Menu",
@@ -453,7 +453,70 @@ var ChatBotSdk = (function() {
         "taglish": "For direct and Agoda bookings, may ₱3,000 refundable security deposit upon check-in. For Airbnb, covered na po by AirCover."
       }
     }
-  ]
+  ],
+  "booking_workflow": {
+    "id": "book_a_stay",
+    "steps": {
+      "dates": {
+        "prompt": "Hello! I'm here to help book your stay. When are you looking to stay with us?",
+        "options": [
+          {
+            "id": "sub_dates_weekend",
+            "label": "This upcoming weekend",
+            "target": "guests"
+          },
+          {
+            "id": "sub_dates_weekday",
+            "label": "Weekday staycation",
+            "target": "guests"
+          },
+          {
+            "id": "sub_dates_custom",
+            "label": "I have specific dates in mind",
+            "target": "ask_dates"
+          },
+          {
+            "id": "back_root",
+            "label": "Back to Main Menu",
+            "target": "root"
+          }
+        ]
+      },
+      "ask_dates": {
+        "prompt": "Alright! Which dates?",
+        "expects_input": "dates",
+        "next_step": "guests"
+      },
+      "guests": {
+        "prompt": "How many guests?",
+        "options": [
+          {
+            "id": "sub_guests_small",
+            "label": "1 to 2 Guests (Couple / Solo)",
+            "target": "checkout",
+            "guestCount": 2
+          },
+          {
+            "id": "sub_guests_family",
+            "label": "3 to 4 Guests (Small Family)",
+            "target": "checkout",
+            "guestCount": 4
+          },
+          {
+            "id": "sub_guests_group",
+            "label": "5 to 6 Guests (Maximum Group)",
+            "target": "checkout",
+            "guestCount": 6
+          },
+          {
+            "id": "back_dates",
+            "label": "Back to Dates",
+            "target": "dates"
+          }
+        ]
+      }
+    }
+  }
 };
 
   function OptionTree() {
