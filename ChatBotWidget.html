@@ -4,7 +4,10 @@
     <span class="chatbot-title">Chat Bot</span>
     <button type="button" class="chatbot-close-btn" aria-label="Close Chat" onclick="toggleCondoChatbot(false)">✕</button>
   </div>
-  <div class="chatbot-quick-actions" id="chatbotQuickActions" role="group" aria-label="Quick options"></div>
+  <div class="chatbot-initial-tray" id="chatbotInitialTray">
+    <div class="chatbot-quick-actions" id="chatbotQuickActions" role="group" aria-label="Quick options"></div>
+    <div class="chatbot-option-hint" id="chatbotOptionHint" aria-hidden="true"></div>
+  </div>
   <div class="chatbot-messages" id="chatbotMessages" role="log" aria-live="polite"></div>
   <form class="chatbot-input-bar" id="chatbotInputForm" onsubmit="handleChatbotSubmit(event)">
     <label for="chatbotInput" class="sr-only">Type a question</label>
@@ -15,7 +18,15 @@
 
 <script>
 var CondoChatbotWidget = (function() {
-  var KB = {"unit":{"name":"Unit 418 Serin East Tagaytay","location":"Barangay Silang Crossing East, Tagaytay City, Cavite 4120","type":"2-Bedroom Condominium (70 sqm)","check_in_time":"2:00 PM (14:00)","check_out_time":"12:00 NN (12:00)","turnover_window":"12:00 NN – 2:00 PM","endorsement_url":"https://serineasttagaytayendorsement.carrd.co/","security_deposit_direct_agoda":3000,"security_deposit_airbnb":"Covered by Airbnb AirCover (no upfront cash deposit)","parking_covered_nightly_php":350,"parking_street":"Free street parking in front of Serin East Tower (subject to availability)"},"menu_tree":{"root":{"id":"root","title":"Unit 418 Serin East Tagaytay","message":"","options":[{"id":"opt_booking","label":"How much are the rates","icon":"","target":"menu_booking","tier":"unbooked"},{"id":"opt_parking","label":"Parking details","icon":"","target":"res_parking","tier":"unbooked"},{"id":"opt_checkin","label":"Check-In & Smart Lock Code","icon":"","target":"res_checkin","tier":"confirmed"},{"id":"opt_endorsement","label":"Admin Endorsement (Carrd Link)","icon":"","target":"res_endorsement","tier":"confirmed"},{"id":"opt_rules","label":"Kitchen & House Rules","icon":"","target":"res_rules","tier":"confirmed"},{"id":"opt_amenities","label":"Pool, Wi-Fi & Appliances","icon":"","target":"res_amenities","tier":"confirmed"},{"id":"opt_contact","label":"Contact Host & Caretaker","icon":"","target":"res_contact","tier":"confirmed"}]},"menu_booking":{"id":"menu_booking","title":"Booking & Staycation Rates","message":"Unit 418 is a spacious 70sqm 2-Bedroom suite in Serin East Tagaytay. Which booking channel or pricing detail would you like to explore?","options":[{"id":"sub_direct","label":"Direct Booking Rates","icon":"","target":"res_booking_direct"},{"id":"sub_ota","label":"Airbnb, Agoda & Booking.com","icon":"","target":"res_booking_ota"},{"id":"sub_deposit","label":"Security Deposit Policy","icon":"","target":"res_booking_deposit"},{"id":"back_root","label":"Back to Main Menu","icon":"","target":"root"}]}},"resolutions":{"res_parking":{"id":"res_parking","title":"Parking Information","text":"🚗 **Parking Options at Unit 418 Serin East Tagaytay**:\n\n1. **Covered Tower Parking Slot**: Dedicated covered parking is available at **₱350 per night** (co-terminous with your 2:00 PM check-in to 12:00 NN check-out). Advance reservation with vehicle make, model, color, and plate number is required for building administration clearance.\n2. **Free Street Parking**: Free street parking is available along the street directly in front of Serin East Tower (first-come, first-served basis).\n\nWould you like to reserve the covered parking slot?","actions":[{"label":"Reserve Covered Parking (₱350)","actionType":"lead","payload":{"service":"parking_reservation"}},{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_checkin":{"id":"res_checkin","title":"Check-In, Check-Out & Smart Lock PIN","text":"🔑 **Standard Hours & Smart Lock Access**:\n\n• **Check-In**: 2:00 PM (14:00)\n• **Check-Out**: 12:00 NN (12:00)\n• **Caretaker Turnover Window**: 12:00 NN – 2:00 PM\n\n🔒 **Smart Lock PIN Release Gate**:\nYour unique 6-digit smart lock PIN is generated specifically for your reservation and is released **on your check-in day upon arrival**, once:\n1. Your building endorsement is submitted and verified via the Carrd link.\n2. The caretaker has completed the 12NN–2PM sanitization and unit setup.","actions":[{"label":"Open Endorsement Carrd","actionType":"link","url":"https://serineasttagaytayendorsement.carrd.co/"},{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_endorsement":{"id":"res_endorsement","title":"Building Admin Endorsement Clearance","text":"📋 **Mandatory Serin East Building Administration Endorsement**:\n\nPer Serin East Tagaytay condominium security rules, all incoming guests must be officially endorsed before lobby entry.\n\n🔗 **Submission Link**: [serineasttagaytayendorsement.carrd.co](https://serineasttagaytayendorsement.carrd.co/)\n\n**Required Requirements**:\n1. One (1) Valid Government-issued ID of the Primary Guest.\n2. Full complete names of all accompanying guests.\n3. One (1) active mobile contact number.\n4. Vehicle plate & model details (if booking the ₱350/night covered parking slot).","actions":[{"label":"Submit Endorsement Now","actionType":"link","url":"https://serineasttagaytayendorsement.carrd.co/"},{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_rules":{"id":"res_rules","title":"Kitchen & Unit House Rules","text":"🍳 **Kitchen & House Rules for Unit 418**:\n\n• **Light Cooking**: Allowed! The kitchen is equipped with an induction cooktop, range hood, microwave, refrigerator, rice cooker, electric kettle, and cookware/utensils.\n• **Strict No-Smelly-Frying Rule**: Strictly **no frying of dried fish (tuyo, daing, tinapa)** or strong pungent foods to preserve unit freshness for incoming guests.\n• **Smoking & Vaping**: Strictly prohibited inside the unit and balcony per condominium regulations.\n• **Quiet Hours**: 10:00 PM to 8:00 AM.","actions":[{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_amenities":{"id":"res_amenities","title":"Swimming Pool, Wi-Fi & Appliances","text":"🏊 **Amenities & Appliances**:\n\n• **Fiber Wi-Fi**: High-speed internet throughout the 2BR suite.\n• **Entertainment**: Smart TV with Netflix access.\n• **Bathroom**: Hot and cold shower heater + fresh guest towels.\n• **Swimming Pool**: Serin East outdoor pool access is managed by the building administration. Guest pool passes are paid directly to the admin office on the day of use.\n• **Air Conditioning**: Air-conditioned bedrooms and living area.","actions":[{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_contact":{"id":"res_contact","title":"Contact Host & Caretaker","text":"📞 **Need immediate assistance?**\n\n• Our on-site caretaker coordinates unit preparation and turnovers between 12:00 NN and 2:00 PM.\n• You can reach host management directly via Messenger, Viber, WhatsApp, or phone call once your booking is confirmed.","actions":[{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_booking_direct":{"id":"res_booking_direct","title":"Direct Booking","text":"🏷️ **Direct Booking Advantage**:\n\nBook directly through our website to secure instant reservation confirmation with no platform service fees!\n\n• **Payment Channels**: BDO / BPI Philippine Bank Transfer or GCash.\n• **Security Deposit**: ₱3,000 refundable security deposit (refunded promptly after checkout inspection).","actions":[{"label":"Inquire for Dates","actionType":"lead","payload":{"service":"direct_quote"}},{"label":"Back to Booking Menu","actionType":"navigate","target":"menu_booking"}]},"res_booking_ota":{"id":"res_booking_ota","title":"OTA Booking Channels","text":"🌐 **We are also listed on major booking platforms**:\n\n• **Airbnb**: Instant booking with PayPal / Credit Card and Airbnb AirCover protection.\n• **Agoda & Booking.com**: Philippine bank and card payments accepted. (Note: Agoda direct bookings require a ₱3,000 refundable security deposit at check-in).","actions":[{"label":"Back to Booking Menu","actionType":"navigate","target":"menu_booking"}]},"res_booking_deposit":{"id":"res_booking_deposit","title":"Security Deposit Policy","text":"💵 **Security Deposit Policies by Channel**:\n\n• **Direct Bookings & Agoda**: A **₱3,000 refundable security deposit** is collected upon check-in. This is refunded in full post-checkout once the caretaker completes the inventory inspection.\n• **Airbnb**: Covered under Airbnb AirCover protection (no upfront cash deposit collected).","actions":[{"label":"Back to Booking Menu","actionType":"navigate","target":"menu_booking"}]}},"faq_topics":[{"id":"parking","title":"Parking Rules & Rates","keywords":["parking","park","car","sasakyan","kotse","parada","paradahan","covered parking","tower parking","street parking","magkano parking"],"responses":{"en":"Covered tower parking is available for ₱350/night (requires advance plate and vehicle details). Free street parking is also available in front of Serin East Tower.","tl":"May covered tower parking sa halagang ₱350/gabi (kailangan lang ng plate number bago dumating). May libreng street parking din sa harap ng Serin East.","taglish":"Covered parking is available for ₱350/night with advance plate number reservation po. Meron din free street parking in front of Serin East Tower."}},{"id":"checkin_checkout","title":"Check-in and Check-out Times","keywords":["check-in","checkin","check-out","checkout","oras","time","dating","alis","arrival","departure","anong oras"],"responses":{"en":"Check-in is strictly at 2:00 PM and check-out is at 12:00 NN to give our caretaker the required 12NN–2PM turnover sanitization window.","tl":"Ang check-in ay 2:00 PM at ang check-out ay 12:00 NN upang magkaroon ng sapat na oras ang caretaker para maglinis mula 12NN hanggang 2PM.","taglish":"Standard check-in is at 2:00 PM and check-out is at 12:00 NN po para sa 12NN–2PM turnover sanitization."}},{"id":"smart_lock","title":"Smart Lock PIN Release","keywords":["lock","pin","code","smart lock","digital lock","paano pumasok","door code","susi","key"],"responses":{"en":"Your unique digital lock PIN is released on arrival day once your Carrd endorsement is submitted and the caretaker confirms unit readiness.","tl":"Ang inyong 6-digit smart lock PIN ay ibinibigay sa araw ng check-in kapag na-submit na ang Carrd endorsement at handa na ang unit.","taglish":"Ang smart lock PIN po ay isesend on check-in day upon arrival after ma-submit ang Carrd endorsement and ready na ang unit."}},{"id":"endorsement","title":"Carrd Endorsement Link","keywords":["endorsement","carrd","id","admin","clearance","requirements","bisita","guest list","form"],"responses":{"en":"All guests must submit their endorsement via https://serineasttagaytayendorsement.carrd.co/ with 1 valid ID of the primary guest and names of all guests.","tl":"Lahat ng guests ay kailangang mag-submit sa https://serineasttagaytayendorsement.carrd.co/ kalakip ang 1 valid ID at kumpletong listahan ng kasama.","taglish":"Required po mag-submit ng endorsement sa https://serineasttagaytayendorsement.carrd.co/ with 1 valid primary ID and names ng lahat ng kasama bago pumasok."}},{"id":"cooking","title":"Kitchen & Cooking","keywords":["cook","cooking","luto","magluto","kitchen","stove","microwave","tuyo","daing","prito","frying","lutuan"],"responses":{"en":"Light cooking is allowed with our induction stove, microwave, and rice cooker. Strictly no smelly frying (such as dried fish/tuyo).","tl":"Pwedeng magluto ng light meals sa induction stove, microwave, at rice cooker. Mahigpit na bawal ang malalansang prito tulad ng tuyo o daing.","taglish":"Yes, allowed po mag-light cooking with induction, microwave, and rice cooker. Strictly no smelly frying like tuyo or daing po."}},{"id":"security_deposit","title":"Security Deposit Policy","keywords":["deposit","security deposit","refundable","3000","aircover","bond","pera"],"responses":{"en":"Direct bookings and Agoda require a refundable ₱3,000 security deposit at check-in. Airbnb bookings are covered by AirCover.","tl":"May ₱3,000 refundable security deposit sa direct at Agoda bookings na ibinabalik pagka-checkout. Sa Airbnb naman ay covered ng AirCover.","taglish":"For direct and Agoda bookings, may ₱3,000 refundable security deposit upon check-in. For Airbnb, covered na po by AirCover."}}]};
+  var KB = {"unit":{"name":"Unit 418 Serin East Tagaytay","location":"Barangay Silang Crossing East, Tagaytay City, Cavite 4120","type":"2-Bedroom Condominium (70 sqm)","check_in_time":"2:00 PM (14:00)","check_out_time":"12:00 NN (12:00)","turnover_window":"12:00 NN – 2:00 PM","endorsement_url":"https://serineasttagaytayendorsement.carrd.co/","security_deposit_direct_agoda":3000,"security_deposit_airbnb":"Covered by Airbnb AirCover (no upfront cash deposit)","parking_covered_nightly_php":350,"parking_street":"Free street parking in front of Serin East Tower (subject to availability)"},"menu_tree":{"root":{"id":"root","title":"Unit 418 Serin East Tagaytay","message":"","options":[{"id":"opt_booking","label":"Book a stay","icon":"","target":"menu_book_stay","tier":"unbooked"},{"id":"opt_parking","label":"Parking details","icon":"","target":"res_parking","tier":"confirmed"},{"id":"opt_checkin","label":"Check-In & Smart Lock Code","icon":"","target":"res_checkin","tier":"confirmed"},{"id":"opt_endorsement","label":"Admin Endorsement (Carrd Link)","icon":"","target":"res_endorsement","tier":"confirmed"},{"id":"opt_rules","label":"Kitchen & House Rules","icon":"","target":"res_rules","tier":"confirmed"},{"id":"opt_amenities","label":"Pool, Wi-Fi & Appliances","icon":"","target":"res_amenities","tier":"confirmed"},{"id":"opt_contact","label":"Contact Host & Caretaker","icon":"","target":"res_contact","tier":"confirmed"}]},"menu_book_stay":{"id":"menu_book_stay","title":"Book a stay at Unit 418","message":"Welcome! Unit 418 is a premier 70sqm 2-Bedroom suite in Serin East Tagaytay (beside Ayala Malls Serin). When are you planning to visit?","options":[{"id":"sub_dates_weekend","label":"This upcoming weekend","icon":"","target":"menu_book_guests"},{"id":"sub_dates_weekday","label":"Weekday staycation","icon":"","target":"menu_book_guests"},{"id":"sub_dates_custom","label":"I have specific dates in mind","icon":"","target":"menu_book_guests"},{"id":"back_root","label":"Back to Main Menu","icon":"","target":"root"}]},"menu_book_guests":{"id":"menu_book_guests","title":"Guest Capacity","message":"Unit 418 features 2 private bedrooms, a fully equipped kitchen, hot shower, and high-speed Wi-Fi. How many guests will be staying?","options":[{"id":"sub_guests_small","label":"1 to 2 Guests (Couple / Solo)","icon":"","target":"res_book_checkout"},{"id":"sub_guests_family","label":"3 to 4 Guests (Small Family)","icon":"","target":"res_book_checkout"},{"id":"sub_guests_group","label":"5 to 6 Guests (Maximum Group)","icon":"","target":"res_book_checkout"},{"id":"back_dates","label":"Back to Dates","icon":"","target":"menu_book_stay"}]},"menu_booking":{"id":"menu_booking","title":"Booking & Staycation Rates","message":"Unit 418 is a spacious 70sqm 2-Bedroom suite in Serin East Tagaytay. Which booking channel or pricing detail would you like to explore?","options":[{"id":"sub_direct","label":"Direct Booking Rates","icon":"","target":"res_booking_direct"},{"id":"sub_ota","label":"Airbnb, Agoda & Booking.com","icon":"","target":"res_booking_ota"},{"id":"sub_deposit","label":"Security Deposit Policy","icon":"","target":"res_booking_deposit"},{"id":"back_root","label":"Back to Main Menu","icon":"","target":"root"}]}},"resolutions":{"res_book_checkout":{"id":"res_book_checkout","title":"Unit 418 Direct Stay Summary & Checkout","text":"✨ **Your Unit 418 Tagaytay Stay Summary**:\n\n• **Accommodation**: 2-Bedroom Suite (70 sqm), 2 Baths, Living Room & Balcony.\n• **Inclusions**: High-Speed Fiber Wi-Fi, Smart TV with Netflix, Induction Stove & Microwave for light cooking, Hot/Cold Shower.\n• **Direct Booking Advantage**: Zero OTA service fees + instant booking confirmation.\n• **Check-In/Out**: 2:00 PM check-in / 12:00 NN check-out.\n• **Optional Parking**: Covered tower slot at ₱350/night.\n\nReady to reserve? Click below to proceed to checkout and lock in your stay!","actions":[{"label":"Proceed to Checkout","actionType":"checkout","payload":{"service":"direct_checkout"}},{"label":"Modify Dates or Guests","actionType":"navigate","target":"menu_book_stay"},{"label":"Back to Main Menu","actionType":"navigate","target":"root"}]},"res_parking":{"id":"res_parking","title":"Parking Information","text":"🚗 **Parking Options at Unit 418 Serin East Tagaytay**:\n\n1. **Covered Tower Parking Slot**: Dedicated covered parking is available at **₱350 per night** (co-terminous with your 2:00 PM check-in to 12:00 NN check-out). Advance reservation with vehicle make, model, color, and plate number is required for building administration clearance.\n2. **Free Street Parking**: Free street parking is available along the street directly in front of Serin East Tower (first-come, first-served basis).\n\nWould you like to reserve the covered parking slot?","actions":[{"label":"Reserve Covered Parking (₱350)","actionType":"lead","payload":{"service":"parking_reservation"}},{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_checkin":{"id":"res_checkin","title":"Check-In, Check-Out & Smart Lock PIN","text":"🔑 **Standard Hours & Smart Lock Access**:\n\n• **Check-In**: 2:00 PM (14:00)\n• **Check-Out**: 12:00 NN (12:00)\n• **Caretaker Turnover Window**: 12:00 NN – 2:00 PM\n\n🔒 **Smart Lock PIN Release Gate**:\nYour unique 6-digit smart lock PIN is generated specifically for your reservation and is released **on your check-in day upon arrival**, once:\n1. Your building endorsement is submitted and verified via the Carrd link.\n2. The caretaker has completed the 12NN–2PM sanitization and unit setup.","actions":[{"label":"Open Endorsement Carrd","actionType":"link","url":"https://serineasttagaytayendorsement.carrd.co/"},{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_endorsement":{"id":"res_endorsement","title":"Building Admin Endorsement Clearance","text":"📋 **Mandatory Serin East Building Administration Endorsement**:\n\nPer Serin East Tagaytay condominium security rules, all incoming guests must be officially endorsed before lobby entry.\n\n🔗 **Submission Link**: [serineasttagaytayendorsement.carrd.co](https://serineasttagaytayendorsement.carrd.co/)\n\n**Required Requirements**:\n1. One (1) Valid Government-issued ID of the Primary Guest.\n2. Full complete names of all accompanying guests.\n3. One (1) active mobile contact number.\n4. Vehicle plate & model details (if booking the ₱350/night covered parking slot).","actions":[{"label":"Submit Endorsement Now","actionType":"link","url":"https://serineasttagaytayendorsement.carrd.co/"},{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_rules":{"id":"res_rules","title":"Kitchen & Unit House Rules","text":"🍳 **Kitchen & House Rules for Unit 418**:\n\n• **Light Cooking**: Allowed! The kitchen is equipped with an induction cooktop, range hood, microwave, refrigerator, rice cooker, electric kettle, and cookware/utensils.\n• **Strict No-Smelly-Frying Rule**: Strictly **no frying of dried fish (tuyo, daing, tinapa)** or strong pungent foods to preserve unit freshness for incoming guests.\n• **Smoking & Vaping**: Strictly prohibited inside the unit and balcony per condominium regulations.\n• **Quiet Hours**: 10:00 PM to 8:00 AM.","actions":[{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_amenities":{"id":"res_amenities","title":"Swimming Pool, Wi-Fi & Appliances","text":"🏊 **Amenities & Appliances**:\n\n• **Fiber Wi-Fi**: High-speed internet throughout the 2BR suite.\n• **Entertainment**: Smart TV with Netflix access.\n• **Bathroom**: Hot and cold shower heater + fresh guest towels.\n• **Swimming Pool**: Serin East outdoor pool access is managed by the building administration. Guest pool passes are paid directly to the admin office on the day of use.\n• **Air Conditioning**: Air-conditioned bedrooms and living area.","actions":[{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_contact":{"id":"res_contact","title":"Contact Host & Caretaker","text":"📞 **Need immediate assistance?**\n\n• Our on-site caretaker coordinates unit preparation and turnovers between 12:00 NN and 2:00 PM.\n• You can reach host management directly via Messenger, Viber, WhatsApp, or phone call once your booking is confirmed.","actions":[{"label":"Back to Menu","actionType":"navigate","target":"root"}]},"res_booking_direct":{"id":"res_booking_direct","title":"Direct Booking","text":"🏷️ **Direct Booking Advantage**:\n\nBook directly through our website to secure instant reservation confirmation with no platform service fees!\n\n• **Payment Channels**: BDO / BPI Philippine Bank Transfer or GCash.\n• **Security Deposit**: ₱3,000 refundable security deposit (refunded promptly after checkout inspection).","actions":[{"label":"Inquire for Dates","actionType":"lead","payload":{"service":"direct_quote"}},{"label":"Back to Booking Menu","actionType":"navigate","target":"menu_booking"}]},"res_booking_ota":{"id":"res_booking_ota","title":"OTA Booking Channels","text":"🌐 **We are also listed on major booking platforms**:\n\n• **Airbnb**: Instant booking with PayPal / Credit Card and Airbnb AirCover protection.\n• **Agoda & Booking.com**: Philippine bank and card payments accepted. (Note: Agoda direct bookings require a ₱3,000 refundable security deposit at check-in).","actions":[{"label":"Back to Booking Menu","actionType":"navigate","target":"menu_booking"}]},"res_booking_deposit":{"id":"res_booking_deposit","title":"Security Deposit Policy","text":"💵 **Security Deposit Policies by Channel**:\n\n• **Direct Bookings & Agoda**: A **₱3,000 refundable security deposit** is collected upon check-in. This is refunded in full post-checkout once the caretaker completes the inventory inspection.\n• **Airbnb**: Covered under Airbnb AirCover protection (no upfront cash deposit collected).","actions":[{"label":"Back to Booking Menu","actionType":"navigate","target":"menu_booking"}]}},"faq_topics":[{"id":"parking","title":"Parking Rules & Rates","keywords":["parking","park","car","sasakyan","kotse","parada","paradahan","covered parking","tower parking","street parking","magkano parking"],"responses":{"en":"Covered tower parking is available for ₱350/night (requires advance plate and vehicle details). Free street parking is also available in front of Serin East Tower.","tl":"May covered tower parking sa halagang ₱350/gabi (kailangan lang ng plate number bago dumating). May libreng street parking din sa harap ng Serin East.","taglish":"Covered parking is available for ₱350/night with advance plate number reservation po. Meron din free street parking in front of Serin East Tower."}},{"id":"checkin_checkout","title":"Check-in and Check-out Times","keywords":["check-in","checkin","check-out","checkout","oras","time","dating","alis","arrival","departure","anong oras"],"responses":{"en":"Check-in is strictly at 2:00 PM and check-out is at 12:00 NN to give our caretaker the required 12NN–2PM turnover sanitization window.","tl":"Ang check-in ay 2:00 PM at ang check-out ay 12:00 NN upang magkaroon ng sapat na oras ang caretaker para maglinis mula 12NN hanggang 2PM.","taglish":"Standard check-in is at 2:00 PM and check-out is at 12:00 NN po para sa 12NN–2PM turnover sanitization."}},{"id":"smart_lock","title":"Smart Lock PIN Release","keywords":["lock","pin","code","smart lock","digital lock","paano pumasok","door code","susi","key"],"responses":{"en":"Your unique digital lock PIN is released on arrival day once your Carrd endorsement is submitted and the caretaker confirms unit readiness.","tl":"Ang inyong 6-digit smart lock PIN ay ibinibigay sa araw ng check-in kapag na-submit na ang Carrd endorsement at handa na ang unit.","taglish":"Ang smart lock PIN po ay isesend on check-in day upon arrival after ma-submit ang Carrd endorsement and ready na ang unit."}},{"id":"endorsement","title":"Carrd Endorsement Link","keywords":["endorsement","carrd","id","admin","clearance","requirements","bisita","guest list","form"],"responses":{"en":"All guests must submit their endorsement via https://serineasttagaytayendorsement.carrd.co/ with 1 valid ID of the primary guest and names of all guests.","tl":"Lahat ng guests ay kailangang mag-submit sa https://serineasttagaytayendorsement.carrd.co/ kalakip ang 1 valid ID at kumpletong listahan ng kasama.","taglish":"Required po mag-submit ng endorsement sa https://serineasttagaytayendorsement.carrd.co/ with 1 valid primary ID and names ng lahat ng kasama bago pumasok."}},{"id":"cooking","title":"Kitchen & Cooking","keywords":["cook","cooking","luto","magluto","kitchen","stove","microwave","tuyo","daing","prito","frying","lutuan"],"responses":{"en":"Light cooking is allowed with our induction stove, microwave, and rice cooker. Strictly no smelly frying (such as dried fish/tuyo).","tl":"Pwedeng magluto ng light meals sa induction stove, microwave, at rice cooker. Mahigpit na bawal ang malalansang prito tulad ng tuyo o daing.","taglish":"Yes, allowed po mag-light cooking with induction, microwave, and rice cooker. Strictly no smelly frying like tuyo or daing po."}},{"id":"security_deposit","title":"Security Deposit Policy","keywords":["deposit","security deposit","refundable","3000","aircover","bond","pera"],"responses":{"en":"Direct bookings and Agoda require a refundable ₱3,000 security deposit at check-in. Airbnb bookings are covered by AirCover.","tl":"May ₱3,000 refundable security deposit sa direct at Agoda bookings na ibinabalik pagka-checkout. Sa Airbnb naman ay covered ng AirCover.","taglish":"For direct and Agoda bookings, may ₱3,000 refundable security deposit upon check-in. For Airbnb, covered na po by AirCover."}}]};
+
+  function isTouchDevice() {
+    try {
+      return ('ontouchstart' in window) || (navigator && navigator.maxTouchPoints > 0);
+    } catch (e) {
+      return false;
+    }
+  }
 
   function getGuestStatus() {
     try {
@@ -35,6 +46,38 @@ var CondoChatbotWidget = (function() {
     refreshMenu();
   }
 
+  function clearActiveOptions() {
+    var initialTray = document.getElementById('chatbotQuickActions');
+    if (initialTray) initialTray.innerHTML = '';
+    var initialHint = document.getElementById('chatbotOptionHint');
+    if (initialHint) initialHint.textContent = '';
+
+    var activeInlines = document.querySelectorAll('.inline-options-container');
+    for (var i = 0; i < activeInlines.length; i++) {
+      activeInlines[i].remove();
+    }
+  }
+
+  function showThinking(callback) {
+    var container = document.getElementById('chatbotMessages');
+    if (!container) {
+      if (callback) callback();
+      return;
+    }
+    var thinkingEl = document.createElement('div');
+    thinkingEl.className = 'chatbot-thinking-indicator';
+    thinkingEl.id = 'activeThinkingIndicator';
+    thinkingEl.textContent = 'Analyzing the query...';
+    container.appendChild(thinkingEl);
+    container.scrollTop = container.scrollHeight;
+
+    setTimeout(function() {
+      var active = document.getElementById('activeThinkingIndicator');
+      if (active) active.remove();
+      if (callback) callback();
+    }, 2000);
+  }
+
   function appendMsg(sender, text) {
     var container = document.getElementById('chatbotMessages');
     if (!container) return;
@@ -49,10 +92,10 @@ var CondoChatbotWidget = (function() {
     container.scrollTop = container.scrollHeight;
   }
 
-  function renderOptions(options) {
-    var tray = document.getElementById('chatbotQuickActions');
-    if (!tray) return;
-    tray.innerHTML = '';
+  function renderOptions(options, targetContainer) {
+    var container = targetContainer || document.getElementById('chatbotQuickActions');
+    if (!container) return;
+    container.innerHTML = '';
     if (!Array.isArray(options) || options.length === 0) return;
 
     for (var i = 0; i < options.length; i++) {
@@ -64,9 +107,27 @@ var CondoChatbotWidget = (function() {
         btn.onclick = function() {
           handleOptionClick(opt);
         };
-        tray.appendChild(btn);
+        container.appendChild(btn);
       })(options[i]);
     }
+  }
+
+  function appendInlineOptions(options) {
+    if (!Array.isArray(options) || options.length === 0) return;
+    var messages = document.getElementById('chatbotMessages');
+    if (!messages) return;
+
+    var inlineBox = document.createElement('div');
+    inlineBox.className = 'inline-options-container';
+
+    var hint = document.createElement('div');
+    hint.className = 'chatbot-option-hint';
+    hint.textContent = isTouchDevice() ? 'Tap an option' : 'Click an option';
+
+    renderOptions(options, inlineBox);
+    inlineBox.appendChild(hint);
+    messages.appendChild(inlineBox);
+    messages.scrollTop = messages.scrollHeight;
   }
 
   function getRootOptions() {
@@ -92,47 +153,72 @@ var CondoChatbotWidget = (function() {
   }
 
   function refreshMenu() {
-    renderOptions(getRootOptions());
+    clearActiveOptions();
+    var rootOpts = getRootOptions();
+    renderOptions(rootOpts, document.getElementById('chatbotQuickActions'));
+    var hintEl = document.getElementById('chatbotOptionHint');
+    if (hintEl) {
+      hintEl.textContent = isTouchDevice() ? 'Tap an option' : 'Click an option';
+    }
   }
 
   function handleOptionClick(opt) {
+    clearActiveOptions();
     appendMsg('guest', opt.label);
 
-    if (opt.actionType === 'sync_booking') {
-      promptSyncBooking();
-      return;
-    }
-
-    var target = opt.target || opt.id;
-
-    if (opt.actionType === 'link' && opt.url) {
-      window.open(opt.url, '_blank', 'noopener,noreferrer');
-      return;
-    }
-
-    if (KB.menu_tree && KB.menu_tree[target]) {
-      var menu = KB.menu_tree[target];
-      if (menu.message || menu.title) {
-        appendMsg('bot', menu.message || menu.title);
+    showThinking(function() {
+      if (opt.actionType === 'sync_booking') {
+        promptSyncBooking();
+        return;
       }
-      renderOptions(menu.options);
-    } else if (KB.resolutions && KB.resolutions[target]) {
-      var res = KB.resolutions[target];
-      appendMsg('bot', res.text);
-      if (res.actions) {
-        renderOptions(res.actions.map(function(a) {
-          return {
-            id: a.target || 'root',
-            target: a.target || 'root',
-            label: a.label,
-            icon: a.actionType === 'link' ? '🔗' : '👉',
-            actionType: a.actionType,
-            url: a.url
-          };
-        }));
+
+      if (opt.actionType === 'checkout') {
+        executeCheckout();
+        return;
       }
-    } else {
-      refreshMenu();
+
+      var target = opt.target || opt.id;
+
+      if (opt.actionType === 'link' && opt.url) {
+        window.open(opt.url, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      if (KB.menu_tree && KB.menu_tree[target]) {
+        var menu = KB.menu_tree[target];
+        if (menu.message || menu.title) {
+          appendMsg('bot', menu.message || menu.title);
+        }
+        appendInlineOptions(menu.options);
+      } else if (KB.resolutions && KB.resolutions[target]) {
+        var res = KB.resolutions[target];
+        appendMsg('bot', res.text);
+        if (res.actions) {
+          appendInlineOptions(res.actions.map(function(a) {
+            return {
+              id: a.target || 'root',
+              target: a.target || 'root',
+              label: a.label,
+              icon: a.actionType === 'link' ? '🔗' : '',
+              actionType: a.actionType,
+              url: a.url
+            };
+          }));
+        }
+      } else {
+        refreshMenu();
+      }
+    });
+  }
+
+  function executeCheckout() {
+    appendMsg('bot', 'Proceeding to checkout! Scrolling down to the direct reservation form to lock in your dates.');
+    toggleCondoChatbot(false);
+    var form = document.getElementById('bookingForm') || document.querySelector('form');
+    if (form) {
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      var firstInput = form.querySelector('input');
+      if (firstInput) setTimeout(function() { firstInput.focus(); }, 400);
     }
   }
 
@@ -189,20 +275,22 @@ var CondoChatbotWidget = (function() {
 
   function handleUserMessage(query) {
     if (!query) return;
+    clearActiveOptions();
     appendMsg('guest', query);
 
-    var faqAnswer = matchFaqText(query);
-    if (faqAnswer) {
-      appendMsg('bot', faqAnswer);
-    } else {
-      appendMsg('bot', 'Maraming salamat po! For detailed information regarding rates, covered parking (₱350/night), smart lock, and endorsement, please choose an option below.');
-      refreshMenu();
-    }
+    showThinking(function() {
+      var faqAnswer = matchFaqText(query);
+      if (faqAnswer) {
+        appendMsg('bot', faqAnswer);
+      } else {
+        appendMsg('bot', 'Maraming salamat po! For detailed information regarding rates, covered parking (₱350/night), smart lock, and endorsement, please choose an option below.');
+        refreshMenu();
+      }
+    });
   }
 
   function init() {
     console.log('[ChatBotWidget] Initialized');
-    // Clean initial message log - no welcome greeting bubble
     refreshMenu();
   }
 
