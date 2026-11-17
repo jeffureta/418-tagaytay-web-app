@@ -37,23 +37,20 @@ describe('Mobile-Friendly UI & TDD Engine Contracts', () => {
     test('Styles.html sets 16px font-size on inputs and select to avoid iOS Safari zoom', () => {
       // input, select rule check
       assert.match(rawStyles, /input,\s*select\s*\{[^}]*font-size:\s*16px/s, 'input, select must use font-size: 16px');
-      assert.match(rawStyles, /\.ai-chat-input\s*\{[^}]*font-size:\s*16px/s, '.ai-chat-input must use font-size: 16px');
     });
 
     test('Styles.html enforces >= 44px on interactive controls and buttons', () => {
       assert.match(rawStyles, /min-height:\s*44px/, 'Styles.html should enforce min-height: 44px for touch targets');
     });
 
-    test('Styles.html has mobile drawer with 100dvh and safe area insets', () => {
-      assert.match(rawStyles, /100dvh/, 'Styles.html should declare 100dvh for modern mobile viewports');
+    test('Styles.html has mobile drawer with safe area insets and 48px tap targets', () => {
       assert.match(rawStyles, /env\(safe-area-inset-bottom/, 'Styles.html should handle safe area bottom inset');
+      assert.match(rawStyles, /min-height:\s*48px/, 'Styles.html should enforce 48px for mobile tap targets');
     });
 
-    test('Index.html and Styles.html include accessible Resume/Start New chat banner with >= 44px touch targets', () => {
-      assert.match(rawIndex, /id="aiChatResumeBanner"/, 'Index.html must include #aiChatResumeBanner');
-      assert.match(rawIndex, /id="aiChatResumeBtn"/, 'Index.html must include #aiChatResumeBtn');
-      assert.match(rawIndex, /id="aiChatStartNewBtn"/, 'Index.html must include #aiChatStartNewBtn');
-      assert.match(rawStyles, /\.ai-resume-btn\s*\{[^}]*min-height:\s*44px/s, '.ai-resume-btn must enforce min-height: 44px');
+    test('Index.html and Styles.html include accessible Chatbot launcher with >= 48px touch targets', () => {
+      assert.match(rawIndex, /id="condoChatbotLauncher"/, 'Index.html must include #condoChatbotLauncher');
+      assert.match(rawStyles, /\.condo-chatbot-launcher\s*\{[^}]*min-height:\s*48px/s, '.condo-chatbot-launcher must enforce min-height: 48px');
     });
   });
 
@@ -218,27 +215,6 @@ describe('Mobile-Friendly UI & TDD Engine Contracts', () => {
       const { elements } = createSandbox();
       assert.ok(elements['checkInDate'].min.length >= 10, 'checkInDate should have min date initialized');
       assert.ok(elements['checkOutDate'].min.length >= 10, 'checkOutDate should have min date initialized');
-    });
-
-    test('Mobile AI Drawer toggling locks body scroll and suppresses auto-focus on mobile viewports', () => {
-      const { context, elements, bodyEl, sandbox } = createSandbox(375); // Mobile width 375px
-      
-      // Open drawer on mobile
-      vm.runInContext('toggleAiChatDrawer(true)', context);
-      assert.equal(elements['aiChatDrawer'].style.display, 'flex');
-      assert.equal(bodyEl.style.overflow, 'hidden', 'Body overflow should be hidden on mobile when drawer is open');
-      assert.equal(elements['aiChatInput'].focusCalled, false, 'Auto-focus should NOT be called on mobile when drawer opens');
-
-      // Close drawer on mobile
-      vm.runInContext('toggleAiChatDrawer(false)', context);
-      assert.equal(elements['aiChatDrawer'].style.display, 'none');
-      assert.equal(bodyEl.style.overflow, '', 'Body overflow should be restored when drawer closes');
-
-      // Desktop test: reset focusCalled, change innerWidth to 1024
-      sandbox.window.innerWidth = 1024;
-      elements['aiChatInput'].focusCalled = false;
-      vm.runInContext('toggleAiChatDrawer(true)', context);
-      assert.equal(elements['aiChatInput'].focusCalled, true, 'Auto-focus SHOULD be called on desktop when drawer opens');
     });
   });
 });

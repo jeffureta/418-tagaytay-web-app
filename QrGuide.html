@@ -181,39 +181,13 @@
   </footer>
 </div>
 
-<!-- Floating AI Concierge Launcher for QR Guide -->
-<button type="button" id="aiChatLauncher" class="ai-launcher-btn" onclick="toggleAiChatDrawer(true)" aria-label="Open 24/7 AI Concierge Assistant">
-  <span class="ai-launcher-icon" aria-hidden="true">💬</span>
-  <span class="ai-launcher-label">Ask Unit 418 Concierge</span>
+<!-- 418 Serin Tagaytay Chatbot Launcher & Widget for QR Guide -->
+<button type="button" id="condoChatbotLauncher" class="condo-chatbot-launcher" aria-label="Open Unit 418 Concierge Chat" aria-expanded="false" aria-controls="condo-chatbot-widget" onclick="toggleCondoChatbot()">
+  <span class="chatbot-launcher-icon" aria-hidden="true">💬</span>
+  <span class="chatbot-launcher-text">Ask Unit 418 Concierge</span>
 </button>
 
-<!-- Slide-over / Modal Chat Drawer (Modular) -->
-<div id="aiChatDrawer" class="ai-chat-drawer" role="dialog" aria-modal="true" aria-labelledby="aiChatTitle" style="display: none;">
-  <div class="ai-chat-header">
-    <div class="ai-chat-header-info">
-      <span class="ai-avatar" aria-hidden="true">🤖</span>
-      <div>
-        <h3 id="aiChatTitle" class="ai-chat-title">Unit 418 Concierge</h3>
-        <p class="ai-chat-subtitle">Trilingual Guest Assistant (English / Tagalog / Taglish)</p>
-      </div>
-    </div>
-    <button type="button" id="aiChatCloseBtn" class="ai-chat-close-btn" onclick="toggleAiChatDrawer(false)" aria-label="Close Assistant">
-      ✕
-    </button>
-  </div>
-
-  <div id="aiChatMessages" class="ai-chat-messages" role="log" aria-live="polite">
-    <div class="ai-msg ai-msg-bot">
-      <p>Hello! Welcome to Unit 418 Serin East Tagaytay! Kamusta po! Need help with Wi-Fi, the induction cooker, water heater, parking, or check-out? Just ask me anytime!</p>
-    </div>
-  </div>
-
-  <form id="aiChatForm" class="ai-chat-form" onsubmit="handleAiChatSubmit(event)">
-    <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="Ask about appliances, wifi, checkout..." aria-label="Chat message input" autocomplete="off" />
-    <button type="submit" id="aiChatSendBtn" class="ai-chat-send-btn" aria-label="Send message">Send</button>
-  </form>
-</div>
-
+<?!= include('ChatBotWidget'); ?>
 <?!= include('Scripts'); ?>
 
 <script>

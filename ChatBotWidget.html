@@ -1,0 +1,342 @@
+<!-- Unit 418 Serin East ChatBot Client Widget -->
+<div id="condo-chatbot-widget" class="condo-chatbot-container" role="dialog" aria-modal="true" aria-labelledby="chatbotHeaderTitle">
+  <div class="chatbot-header">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <h3 id="chatbotHeaderTitle">Unit 418 Concierge</h3>
+      <span class="engine-badge" id="engineBadge">Deterministic NLU</span>
+    </div>
+    <button type="button" class="chatbot-close-btn" aria-label="Close Chat" onclick="toggleCondoChatbot(false)">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chatbotMessages" role="log" aria-live="polite"></div>
+  <div class="chatbot-quick-actions" id="chatbotQuickActions" role="group" aria-label="Quick options"></div>
+  <form class="chatbot-input-bar" id="chatbotInputForm" onsubmit="handleChatbotSubmit(event)">
+    <label for="chatbotInput" class="sr-only">Type a question</label>
+    <input type="text" id="chatbotInput" placeholder="Type a question or select an option..." autocomplete="off" />
+    <button type="submit" id="chatbotSendBtn" aria-label="Send Message">Send</button>
+  </form>
+</div>
+
+<script>
+var CondoChatbotWidget = (function() {
+  var KB = {
+    "unit": {
+      "name": "Unit 418 Serin East Tagaytay",
+      "location": "Barangay Silang Crossing East, Tagaytay City, Cavite 4120",
+      "type": "2-Bedroom Condominium (70 sqm)",
+      "check_in_time": "2:00 PM (14:00)",
+      "check_out_time": "12:00 NN (12:00)",
+      "turnover_window": "12:00 NN – 2:00 PM",
+      "endorsement_url": "https://serineasttagaytayendorsement.carrd.co/",
+      "security_deposit_direct_agoda": 3000,
+      "security_deposit_airbnb": "Covered by Airbnb AirCover (no upfront cash deposit)",
+      "parking_covered_nightly_php": 350,
+      "parking_street": "Free street parking in front of Serin East Tower (subject to availability)"
+    },
+    "menu_tree": {
+      "root": {
+        "id": "root",
+        "title": "Welcome to Unit 418 Serin East Tagaytay!",
+        "message": "Hello! I am your 24/7 Concierge for Unit 418 Serin East Tagaytay. How can I assist you today? Please choose an option below or type your question in English, Tagalog, or Taglish.",
+        "options": [
+          { "id": "opt_booking", "label": "📅 Rates & How to Book", "icon": "📅", "target": "menu_booking" },
+          { "id": "opt_parking", "label": "🚗 Parking Details (Free vs ₱350)", "icon": "🚗", "target": "res_parking" },
+          { "id": "opt_checkin", "label": "🔑 Check-In & Smart Lock Code", "icon": "🔑", "target": "res_checkin" },
+          { "id": "opt_endorsement", "label": "📋 Admin Endorsement (Carrd Link)", "icon": "📋", "target": "res_endorsement" },
+          { "id": "opt_rules", "label": "🍳 Kitchen & House Rules", "icon": "🍳", "target": "res_rules" },
+          { "id": "opt_amenities", "label": "🏊 Pool, Wi-Fi & Appliances", "icon": "🏊", "target": "res_amenities" },
+          { "id": "opt_contact", "label": "📞 Contact Host & Caretaker", "icon": "📞", "target": "res_contact" }
+        ]
+      },
+      "menu_booking": {
+        "id": "menu_booking",
+        "title": "Booking & Staycation Rates",
+        "message": "Unit 418 is a spacious 70sqm 2-Bedroom suite in Serin East Tagaytay. Which booking channel or pricing detail would you like to explore?",
+        "options": [
+          { "id": "sub_direct", "label": "🏷️ Direct Booking Discount (-₱500/night)", "icon": "🏷️", "target": "res_booking_direct" },
+          { "id": "sub_ota", "label": "🌐 Airbnb, Agoda & Booking.com", "icon": "🌐", "target": "res_booking_ota" },
+          { "id": "sub_deposit", "label": "💵 Security Deposit Policy", "icon": "💵", "target": "res_booking_deposit" },
+          { "id": "back_root", "label": "⬅️ Back to Main Menu", "icon": "⬅️", "target": "root" }
+        ]
+      }
+    },
+    "resolutions": {
+      "res_parking": {
+        "id": "res_parking",
+        "title": "Parking Information",
+        "text": "🚗 **Parking Options at Unit 418 Serin East Tagaytay**:\n\n1. **Covered Tower Parking Slot**: Dedicated covered parking is available at **₱350 per night** (co-terminous with your 2:00 PM check-in to 12:00 NN check-out). Advance reservation with vehicle make, model, color, and plate number is required for building administration clearance.\n2. **Free Street Parking**: Free street parking is available along the street directly in front of Serin East Tower (first-come, first-served basis).\n\nWould you like to reserve the covered parking slot?",
+        "actions": [
+          { "label": "📋 Open Endorsement Carrd", "actionType": "link", "url": "https://serineasttagaytayendorsement.carrd.co/" },
+          { "label": "⬅️ Back to Menu", "actionType": "navigate", "target": "root" }
+        ]
+      },
+      "res_checkin": {
+        "id": "res_checkin",
+        "title": "Check-In, Check-Out & Smart Lock PIN",
+        "text": "🔑 **Standard Hours & Smart Lock Access**:\n\n• **Check-In**: 2:00 PM (14:00)\n• **Check-Out**: 12:00 NN (12:00)\n• **Caretaker Turnover Window**: 12:00 NN – 2:00 PM\n\n🔒 **Smart Lock PIN Release Gate**:\nYour unique 6-digit smart lock PIN is generated specifically for your reservation and is released **on your check-in day upon arrival**, once:\n1. Your building endorsement is submitted and verified via the Carrd link.\n2. The caretaker has completed the 12NN–2PM sanitization and unit setup.",
+        "actions": [
+          { "label": "📋 Open Endorsement Carrd", "actionType": "link", "url": "https://serineasttagaytayendorsement.carrd.co/" },
+          { "label": "⬅️ Back to Menu", "actionType": "navigate", "target": "root" }
+        ]
+      },
+      "res_endorsement": {
+        "id": "res_endorsement",
+        "title": "Building Admin Endorsement Clearance",
+        "text": "📋 **Mandatory Serin East Building Administration Endorsement**:\n\nPer Serin East Tagaytay condominium security rules, all incoming guests must be officially endorsed before lobby entry.\n\n🔗 **Submission Link**: [serineasttagaytayendorsement.carrd.co](https://serineasttagaytayendorsement.carrd.co/)\n\n📌 **Requirements**:\n• 1 Primary valid government-issued ID (photo/scan).\n• Complete names of all accompanying guests.\n• 1 Emergency contact number.",
+        "actions": [
+          { "label": "Open Carrd Form", "actionType": "link", "url": "https://serineasttagaytayendorsement.carrd.co/" },
+          { "label": "⬅️ Back to Menu", "actionType": "navigate", "target": "root" }
+        ]
+      },
+      "res_rules": {
+        "id": "res_rules",
+        "title": "Kitchen & House Rules",
+        "text": "🍳 **Kitchen & House Rules**:\n\n• **Cooking**: Light cooking is welcome! Use the induction stove, microwave, and electric rice cooker.\n• **Strict No-Smelly-Frying Rule**: Cooking dried fish (tuyo, daing) or pungent frying is strictly prohibited to maintain unit freshness for all guests.\n• **Quiet Hours**: 10:00 PM to 8:00 AM.\n• **No Smoking / No Vaping**: Strictly prohibited inside the unit and balcony.",
+        "actions": [{ "label": "⬅️ Back to Menu", "actionType": "navigate", "target": "root" }]
+      },
+      "res_amenities": {
+        "id": "res_amenities",
+        "title": "Amenities & Wi-Fi",
+        "text": "🏊 **Amenities & Entertainment**:\n\n• **High-Speed Wi-Fi**: Network `Serin418_Guest_5G` (Password: `TagaytayStay418!`).\n• **Smart TV**: 55-inch 4K TV with Netflix and YouTube.\n• **Swimming Pool**: Outdoor pool access available per Serin East admin fee (₱150/head on regular days, ₱300 on holidays).\n• **Hot Shower**: Digital multi-point water heater in master bathroom.",
+        "actions": [{ "label": "⬅️ Back to Menu", "actionType": "navigate", "target": "root" }]
+      },
+      "res_contact": {
+        "id": "res_contact",
+        "title": "Host & Caretaker Contacts",
+        "text": "📞 **Support & Emergency Assistance**:\n\n• **Caretaker Contact**: Ate Gina: 0917-123-4567 (8:00 AM – 7:00 PM)\n• **Host Contact**: Jeff: 0917-888-4180 (Available 24/7 for urgent issues)\n• **Serin East Security Lobby**: Local 101 or 046-413-0000",
+        "actions": [{ "label": "⬅️ Back to Menu", "actionType": "navigate", "target": "root" }]
+      },
+      "res_booking_direct": {
+        "id": "res_booking_direct",
+        "title": "Direct Booking Discount",
+        "text": "🏷️ **Direct Booking Special Rate**:\n\nSave **₱500 per night** compared to Airbnb and Agoda by booking directly through our booking calendar!\n\n• Instant reservation confirmation.\n• No OTA service fees.\n• Free date rescheduling up to 7 days prior to check-in.",
+        "actions": [{ "label": "⬅️ Back to Menu", "actionType": "navigate", "target": "root" }]
+      },
+      "res_booking_ota": {
+        "id": "res_booking_ota",
+        "title": "Online Travel Agencies",
+        "text": "🌐 **OTA Booking Platforms**:\n\n• **Airbnb**: Instant booking with AirCover protection.\n• **Agoda & Booking.com**: Philippine bank and card payments accepted (₱3,000 refundable security deposit required at check-in).",
+        "actions": [{ "label": "⬅️ Back to Menu", "actionType": "navigate", "target": "root" }]
+      },
+      "res_booking_deposit": {
+        "id": "res_booking_deposit",
+        "title": "Security Deposit Policy",
+        "text": "💵 **Security Deposit Policies**:\n\n• **Direct Bookings & Agoda**: A **₱3,000 refundable security deposit** is collected upon check-in, returned post-checkout inspection.\n• **Airbnb**: Covered under Airbnb AirCover protection (no cash deposit).",
+        "actions": [{ "label": "⬅️ Back to Menu", "actionType": "navigate", "target": "root" }]
+      }
+    },
+    "faq_topics": [
+      {
+        "id": "parking",
+        "title": "Parking Rules & Rates",
+        "keywords": ["parking", "park", "car", "sasakyan", "kotse", "parada", "paradahan", "covered parking", "tower parking", "street parking", "magkano parking"],
+        "responses": {
+          "en": "Covered tower parking is available for ₱350/night (requires advance plate and vehicle details). Free street parking is also available in front of Serin East Tower.",
+          "tl": "May covered tower parking sa halagang ₱350/gabi (kailangan lang ng plate number bago dumating). May libreng street parking din sa harap ng Serin East.",
+          "taglish": "Covered parking is available for ₱350/night with advance plate number reservation po. Meron din free street parking in front of Serin East Tower."
+        }
+      },
+      {
+        "id": "checkin_checkout",
+        "title": "Check-in and Check-out Times",
+        "keywords": ["check-in", "checkin", "check-out", "checkout", "oras", "time", "dating", "alis", "arrival", "departure", "anong oras"],
+        "responses": {
+          "en": "Check-in is strictly at 2:00 PM and check-out is at 12:00 NN to give our caretaker the required 12NN–2PM turnover sanitization window.",
+          "tl": "Ang check-in ay 2:00 PM at ang check-out ay 12:00 NN upang magkaroon ng sapat na oras ang caretaker para maglinis mula 12NN hanggang 2PM.",
+          "taglish": "Standard check-in is at 2:00 PM and check-out is at 12:00 NN po para sa 12NN–2PM turnover sanitization."
+        }
+      },
+      {
+        "id": "cooking",
+        "title": "Kitchen & Cooking",
+        "keywords": ["cook", "cooking", "luto", "magluto", "kitchen", "stove", "microwave", "tuyo", "daing", "prito", "frying", "lutuan"],
+        "responses": {
+          "en": "Light cooking is allowed with our induction stove, microwave, and rice cooker. Strictly no smelly frying (such as dried fish/tuyo).",
+          "tl": "Pwedeng magluto ng light meals sa induction stove, microwave, at rice cooker. Mahigpit na bawal ang malalansang prito tulad ng tuyo o daing.",
+          "taglish": "Yes, allowed po mag-light cooking with induction, microwave, and rice cooker. Strictly no smelly frying like tuyo or daing po."
+        }
+      },
+      {
+        "id": "smart_lock",
+        "title": "Smart Lock PIN Release",
+        "keywords": ["lock", "pin", "code", "smart lock", "digital lock", "paano pumasok", "door code", "susi", "key"],
+        "responses": {
+          "en": "Your unique digital lock PIN is released on arrival day once your Carrd endorsement is submitted and the caretaker confirms unit readiness.",
+          "tl": "Ang inyong 6-digit smart lock PIN ay ibinibigay sa araw ng check-in kapag na-submit na ang Carrd endorsement at handa na ang unit.",
+          "taglish": "Ang smart lock PIN po ay isesend on check-in day upon arrival after ma-submit ang Carrd endorsement and ready na ang unit."
+        }
+      },
+      {
+        "id": "endorsement",
+        "title": "Carrd Endorsement Link",
+        "keywords": ["endorsement", "carrd", "id", "admin", "clearance", "requirements", "bisita", "guest list", "form"],
+        "responses": {
+          "en": "All guests must submit their endorsement via https://serineasttagaytayendorsement.carrd.co/ with 1 valid ID of the primary guest and names of all guests.",
+          "tl": "Lahat ng guests ay kailangang mag-submit sa https://serineasttagaytayendorsement.carrd.co/ kalakip ang 1 valid ID at kumpletong listahan ng kasama.",
+          "taglish": "Required po mag-submit ng endorsement sa https://serineasttagaytayendorsement.carrd.co/ with 1 valid primary ID and names ng lahat ng kasama bago pumasok."
+        }
+      }
+    ]
+  };
+
+  function appendMsg(sender, text) {
+    var container = document.getElementById('chatbotMessages');
+    if (!container) return;
+    var el = document.createElement('div');
+    el.className = 'message ' + sender;
+    var formatted = (text || '')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/\n/g, '<br/>');
+    el.innerHTML = formatted;
+    container.appendChild(el);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function renderOptions(options) {
+    var tray = document.getElementById('chatbotQuickActions');
+    if (!tray) return;
+    tray.innerHTML = '';
+    if (!Array.isArray(options) || options.length === 0) return;
+
+    for (var i = 0; i < options.length; i++) {
+      (function(opt) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'option-btn';
+        btn.textContent = (opt.icon ? opt.icon + ' ' : '') + opt.label;
+        btn.onclick = function() {
+          handleOptionClick(opt);
+        };
+        tray.appendChild(btn);
+      })(options[i]);
+    }
+  }
+
+  function handleOptionClick(opt) {
+    appendMsg('guest', opt.label);
+    var target = opt.target || opt.id;
+
+    if (opt.actionType === 'link' && opt.url) {
+      window.open(opt.url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (KB.menu_tree && KB.menu_tree[target]) {
+      var menu = KB.menu_tree[target];
+      appendMsg('bot', menu.message || menu.title);
+      renderOptions(menu.options);
+    } else if (KB.resolutions && KB.resolutions[target]) {
+      var res = KB.resolutions[target];
+      appendMsg('bot', res.text);
+      if (res.actions) {
+        renderOptions(res.actions.map(function(a) {
+          return {
+            id: a.target || 'root',
+            target: a.target || 'root',
+            label: a.label,
+            icon: a.actionType === 'link' ? '🔗' : '👉',
+            actionType: a.actionType,
+            url: a.url
+          };
+        }));
+      }
+    } else {
+      appendMsg('bot', 'Thank you! Returning to main menu.');
+      renderOptions(KB.menu_tree.root.options);
+    }
+  }
+
+  function matchFaqText(text) {
+    if (!text) return null;
+    var clean = text.toLowerCase();
+    var topics = KB.faq_topics || [];
+    for (var i = 0; i < topics.length; i++) {
+      var t = topics[i];
+      for (var k = 0; k < t.keywords.length; k++) {
+        if (clean.indexOf(t.keywords[k].toLowerCase()) !== -1) {
+          var lang = (clean.indexOf('po') !== -1 || clean.indexOf('ba') !== -1) ? 'taglish' : 'en';
+          return t.responses[lang] || t.responses.en || t.responses.taglish;
+        }
+      }
+    }
+    return null;
+  }
+
+  function handleUserMessage(query) {
+    if (!query) return;
+    appendMsg('guest', query);
+
+    var faqAnswer = matchFaqText(query);
+    if (faqAnswer) {
+      appendMsg('bot', faqAnswer);
+    } else {
+      appendMsg('bot', 'Maraming salamat po! For detailed information regarding rates, covered parking (₱350/night), smart lock, and endorsement, please choose an option below.');
+      renderOptions(KB.menu_tree.root.options);
+    }
+  }
+
+  function init() {
+    console.log('[ChatBotWidget] Initialized for Unit 418');
+    if (typeof window !== 'undefined' && window.ai && window.ai.languageModel) {
+      var badge = document.getElementById('engineBadge');
+      if (badge) {
+        badge.textContent = 'Chrome Gemini Nano';
+        badge.style.background = '#047857';
+        badge.style.color = '#ffffff';
+      }
+    }
+    if (KB.menu_tree && KB.menu_tree.root) {
+      appendMsg('bot', KB.menu_tree.root.message);
+      renderOptions(KB.menu_tree.root.options);
+    }
+  }
+
+  return {
+    init: init,
+    handleUserMessage: handleUserMessage,
+    handleOptionClick: handleOptionClick
+  };
+})();
+
+function toggleCondoChatbot(forcedState) {
+  var widget = document.getElementById('condo-chatbot-widget');
+  var launcher = document.getElementById('condoChatbotLauncher');
+  if (!widget) return;
+
+  var isOpen = widget.classList.contains('is-open');
+  var nextState = typeof forcedState === 'boolean' ? forcedState : !isOpen;
+
+  if (nextState) {
+    widget.classList.add('is-open');
+    if (launcher) launcher.setAttribute('aria-expanded', 'true');
+    var isMobile = typeof window !== 'undefined' && window.innerWidth && window.innerWidth <= 640;
+    if (isMobile && document.body) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      var input = document.getElementById('chatbotInput');
+      if (input) input.focus();
+    }
+  } else {
+    widget.classList.remove('is-open');
+    if (launcher) launcher.setAttribute('aria-expanded', 'false');
+    if (document.body) document.body.style.overflow = '';
+  }
+}
+
+function handleChatbotSubmit(event) {
+  if (event && event.preventDefault) event.preventDefault();
+  var input = document.getElementById('chatbotInput');
+  if (!input) return;
+  var text = (input.value || '').trim();
+  if (text) {
+    CondoChatbotWidget.handleUserMessage(text);
+    input.value = '';
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', CondoChatbotWidget.init);
+} else {
+  CondoChatbotWidget.init();
+}
+</script>

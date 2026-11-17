@@ -56,10 +56,13 @@ function buildGasHtml() {
   let indexContent = fs.readFileSync(indexPath, 'utf8');
   const stylesContent = fs.existsSync(stylesPath) ? fs.readFileSync(stylesPath, 'utf8') : '';
   const scriptsContent = fs.existsSync(scriptsPath) ? fs.readFileSync(scriptsPath, 'utf8') : '';
+  const widgetPath = path.join(ROOT_DIR, 'ChatBotWidget.html');
+  const widgetContent = fs.existsSync(widgetPath) ? fs.readFileSync(widgetPath, 'utf8') : '';
 
   // Replace <?!= include('Styles'); ?> and <?!= include('Scripts'); ?>
   indexContent = indexContent.replace(/<\?!=\s*include\(['"]Styles['"]\);\s*\?>/g, stylesContent);
   indexContent = indexContent.replace(/<\?!=\s*include\(['"]Scripts['"]\);\s*\?>/g, scriptsContent);
+  indexContent = indexContent.replace(/<\?!=\s*include\(['"]ChatBotWidget['"]\);\s*\?>/g, widgetContent);
 
   // In-browser mock for google.script.run matching BookingService.js contract:
   // - getBookedRanges()
