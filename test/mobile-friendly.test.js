@@ -40,10 +40,8 @@ describe('Mobile-Friendly UI & TDD Engine Contracts', () => {
       assert.match(rawStyles, /\.ai-chat-input\s*\{[^}]*font-size:\s*16px/s, '.ai-chat-input must use font-size: 16px');
     });
 
-    test('Styles.html enforces >= 44px on calendar nav buttons and pan-y manipulation on grid', () => {
-      assert.match(rawStyles, /\.cal-nav-btn\s*\{[^}]*width:\s*44px/s, '.cal-nav-btn width must be 44px');
-      assert.match(rawStyles, /\.cal-nav-btn\s*\{[^}]*height:\s*44px/s, '.cal-nav-btn height must be 44px');
-      assert.match(rawStyles, /\.cal-days-grid\s*\{[^}]*touch-action:\s*pan-y\s+manipulation/s, 'cal-days-grid must have touch-action: pan-y manipulation');
+    test('Styles.html enforces >= 44px on interactive controls and buttons', () => {
+      assert.match(rawStyles, /min-height:\s*44px/, 'Styles.html should enforce min-height: 44px for touch targets');
     });
 
     test('Styles.html has mobile drawer with 100dvh and safe area insets', () => {
@@ -216,18 +214,10 @@ describe('Mobile-Friendly UI & TDD Engine Contracts', () => {
       assert.equal(vm.runInContext('formatCompactPhp(800)', context), '₱800');
     });
 
-    test('renderCalendar does NOT render price sub-labels (.cal-cell-sub) on available cells', () => {
-      const { context, elements } = createSandbox();
-      const grid = elements['customCalendarGrid'];
-      assert.ok(grid.children.length > 0, 'Calendar grid should have rendered cells');
-
-      // Find an available cell (future date)
-      const availableCell = grid.children.find(c => !c.classList.contains('cal-disabled') && !c.classList.contains('cal-other-month') && !c.classList.contains('cal-booked'));
-      assert.ok(availableCell, 'Should find at least one available current-month cell');
-      
-      const subLabel = availableCell.children.find(child => child.classList && child.classList.contains('cal-cell-sub'));
-      assert.ok(subLabel, 'Available cell should contain a .cal-cell-sub element');
-      assert.equal(subLabel.textContent, '', 'Sublabel should be empty for available dates (rate removed)');
+    test('direct date selection initializes min constraints on mobile sandbox', () => {
+      const { elements } = createSandbox();
+      assert.ok(elements['checkInDate'].min.length >= 10, 'checkInDate should have min date initialized');
+      assert.ok(elements['checkOutDate'].min.length >= 10, 'checkOutDate should have min date initialized');
     });
 
     test('Mobile AI Drawer toggling locks body scroll and suppresses auto-focus on mobile viewports', () => {

@@ -6,7 +6,7 @@ import {
   buildIcsContent,
   validateGuestFormPayload,
   FULL_CONDO_ADDRESS
-} from '../calendar-utils.js';
+} from './test-helpers.js';
 
 describe('Frontend Helper & Client Logic (TDD)', () => {
   test('escapeHtml safely sanitizes potentially dangerous HTML characters', () => {

@@ -15,11 +15,7 @@
   var isInternalCalendarSync = false;
   var currentStayQuote = null;
 
-  // Calendar Grid State
-  var currentDisplayDate = new Date();
-  var selectionAnchor = null;
-  var selectionHover = null;
-  var isDragging = false;
+  // Calendar Grid State removed in favor of direct date selection & 418-serin-tagaytay-calendar-api
 
   function toIso(d) {
     var y = d.getFullYear();
@@ -273,71 +269,6 @@
     var outInput = document.getElementById('checkOutDate');
     if (inInput) inInput.min = todayStr;
     if (outInput) outInput.min = todayStr;
-
-    initCustomCalendar();
-    fetchBookedRanges();
-  }
-
-  function fetchBookedRanges() {
-    hideCalendarError();
-    announceStatus("Fetching Google Calendar availability...");
-    if (typeof google !== 'undefined' && google.script && google.script.run) {
-      google.script.run
-        .withSuccessHandler(onBookedRangesLoaded)
-        .withFailureHandler(onBookedRangesError)
-        .getBookedRanges();
-    } else {
-      // Local preview fallback mock
-      onBookedRangesLoaded([
-        { from: '2026-11-18', to: '2026-11-20', title: 'Reserved Guest' }
-      ]);
-    }
-  }
-
-  function retryFetchAvailability() {
-    var retryBtn = document.getElementById('calendarRetryBtn');
-    if (retryBtn) {
-      retryBtn.disabled = true;
-      retryBtn.textContent = 'Retrying...';
-    }
-    fetchBookedRanges();
-  }
-
-  function showCalendarError(err) {
-    console.error('[CondoCalendar] Failed to load calendar availability:', err);
-    var banner = document.getElementById('calendarErrorBanner');
-    var msgEl = document.getElementById('calendarErrorMessage');
-    var retryBtn = document.getElementById('calendarRetryBtn');
-
-    if (banner && msgEl) {
-      var detail = err && (err.message || (typeof err === 'string' ? err : ''));
-      msgEl.textContent = detail 
-        ? 'Unable to load dates: ' + detail + '. Please check your connection and retry.'
-        : 'Unable to load dates from Google Calendar. Please click Retry.';
-      banner.style.display = 'flex';
-    }
-    if (retryBtn) {
-      retryBtn.disabled = false;
-      retryBtn.textContent = 'Retry';
-    }
-    announceStatus("Failed to load Google Calendar availability.");
-  }
-
-  function hideCalendarError() {
-    var banner = document.getElementById('calendarErrorBanner');
-    if (banner) {
-      banner.style.display = 'none';
-    }
-    var retryBtn = document.getElementById('calendarRetryBtn');
-    if (retryBtn) {
-      retryBtn.disabled = false;
-      retryBtn.textContent = 'Retry';
-    }
-  }
-
-  function onBookedRangesError(err) {
-    showCalendarError(err);
-    onBookedRangesLoaded([]);
   }
 
   if (document.readyState === 'interactive' || document.readyState === 'complete') {
@@ -347,299 +278,8 @@
   }
 
   /* ==========================================================================
-     CUSTOM CALENDAR GRID RENDERING & SELECTION CONTROLLER
+     DIRECT DATE PICKER & PRICING CONTROLLER (Phase 1)
      ========================================================================== */
-  function initCustomCalendar() {
-    var prevBtn = document.getElementById('calPrevBtn');
-    var nextBtn = document.getElementById('calNextBtn');
-
-    if (prevBtn) {
-      prevBtn.addEventListener('click', function() {
-        currentDisplayDate.setMonth(currentDisplayDate.getMonth() - 1);
-        renderCalendar();
-      });
-    }
-
-    if (nextBtn) {
-      nextBtn.addEventListener('click', function() {
-        currentDisplayDate.setMonth(currentDisplayDate.getMonth() + 1);
-        renderCalendar();
-      });
-    }
-
-    window.addEventListener('mouseup', function() {
-      if (isDragging) {
-        finalizeSelection();
-      }
-    });
-
-    renderCalendar();
-  }
-
-  function renderCalendar() {
-    try {
-      var gridEl = document.getElementById('customCalendarGrid');
-      var titleEl = document.getElementById('calMonthTitle');
-      if (!gridEl || !titleEl) return;
-
-      var year = currentDisplayDate.getFullYear();
-      var month = currentDisplayDate.getMonth();
-
-      var monthName = currentDisplayDate.toLocaleString('default', { month: 'long' });
-      titleEl.textContent = monthName + ' ' + year;
-
-      // Update Season Indicator Banner
-      updateSeasonBanner(currentDisplayDate);
-
-      gridEl.innerHTML = '';
-
-      var firstDay = new Date(year, month, 1);
-      var startDayOfWeek = firstDay.getDay();
-      var startDate = new Date(year, month, 1 - startDayOfWeek);
-
-      var inVal = document.getElementById('checkInDate').value;
-      var outVal = document.getElementById('checkOutDate').value;
-
-      for (var i = 0; i < 42; i++) {
-        var cellDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + i);
-        var iso = toIso(cellDate);
-        var dayNum = cellDate.getDate();
-        var isCurrentMonth = cellDate.getMonth() === month;
-
-        var priceInfo = calculateNightlyPrice(iso);
-
-        var cell = document.createElement('div');
-        cell.className = 'cal-cell';
-        cell.dataset.date = iso;
-        cell.setAttribute('role', 'gridcell');
-        cell.setAttribute('tabindex', '0');
-
-        if (priceInfo.tier === 'PEAK') {
-          cell.classList.add('cal-peak-date');
-        }
-
-        var labelText = iso + ': ' + formatPhp(priceInfo.unitRate) + ' / night (' + priceInfo.tierLabel + ', ' + priceInfo.season.label + ')';
-        cell.setAttribute('aria-label', labelText);
-        cell.setAttribute('title', labelText);
-
-        var daySpan = document.createElement('span');
-        daySpan.className = 'cal-cell-day';
-        daySpan.textContent = dayNum;
-        cell.appendChild(daySpan);
-
-        var subSpan = document.createElement('span');
-        subSpan.className = 'cal-cell-sub';
-        cell.appendChild(subSpan);
-
-        if (!isCurrentMonth) {
-          cell.classList.add('cal-other-month');
-        }
-
-        if (iso === todayStr) {
-          cell.classList.add('cal-today');
-        }
-
-        if (iso < todayStr) {
-          cell.classList.add('cal-disabled');
-          cell.setAttribute('aria-disabled', 'true');
-        }
-
-        var isOccupied = currentBookedRanges.some(function(r) {
-          return iso >= r.from && iso < r.to;
-        });
-        if (isOccupied) {
-          cell.classList.add('cal-booked');
-          cell.setAttribute('aria-disabled', 'true');
-          subSpan.textContent = 'Booked';
-        }
-
-        applyCellSelectionClasses(cell, iso, inVal, outVal);
-        attachCellEvents(cell, iso);
-
-        gridEl.appendChild(cell);
-      }
-    } catch (err) {
-      console.error('[CondoCalendar] Error rendering calendar grid:', err);
-      showCalendarError(err);
-    }
-  }
-
-  function updateSeasonBanner(d) {
-    var iso = toIso(d);
-    var season = getSeasonForDate(iso);
-    var iconEl = document.getElementById('calendarSeasonIcon');
-    var titleEl = document.getElementById('calendarSeasonTitle');
-    var descEl = document.getElementById('calendarSeasonDesc');
-
-    if (iconEl) iconEl.textContent = season.icon;
-    if (titleEl) titleEl.textContent = season.label + ' • Unit 418 Dynamic Rate';
-    if (descEl) descEl.textContent = season.desc;
-  }
-
-  function applyCellSelectionClasses(cell, iso, inVal, outVal) {
-    var activeStart = inVal;
-    var activeEnd = outVal;
-
-    if (isDragging && selectionAnchor && selectionHover) {
-      if (selectionAnchor <= selectionHover) {
-        activeStart = selectionAnchor;
-        activeEnd = selectionHover;
-      } else {
-        activeStart = selectionHover;
-        activeEnd = selectionAnchor;
-      }
-    }
-
-    if (activeStart && activeEnd && activeStart !== activeEnd) {
-      if (iso === activeStart) {
-        cell.classList.add('cal-selected-start');
-      } else if (iso === activeEnd) {
-        cell.classList.add('cal-selected-end');
-      } else if (iso > activeStart && iso < activeEnd) {
-        cell.classList.add('cal-in-range');
-      }
-    } else if (activeStart && (!activeEnd || activeStart === activeEnd)) {
-      if (iso === activeStart) {
-        cell.classList.add('cal-selected-single');
-      }
-    }
-  }
-
-  function attachCellEvents(cell, iso) {
-    var isPast = iso < todayStr;
-    var isOccupied = currentBookedRanges.some(function(r) {
-      return iso >= r.from && iso < r.to;
-    });
-
-    cell.addEventListener('click', function(e) {
-      if (isPast || isOccupied) return;
-      handleCellClick(iso);
-    });
-
-    cell.addEventListener('mousedown', function(e) {
-      if (typeof e.button === 'number' && e.button !== 0) return;
-      if (isPast || isOccupied) return;
-
-      isDragging = true;
-      selectionAnchor = iso;
-      selectionHover = iso;
-      highlightPreviewRange(selectionAnchor, selectionHover);
-    });
-
-    cell.addEventListener('mouseenter', function() {
-      if (!isDragging || !selectionAnchor) return;
-      selectionHover = iso;
-      highlightPreviewRange(selectionAnchor, selectionHover);
-    });
-
-    cell.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        if (isPast || isOccupied) return;
-        handleCellClick(iso);
-      }
-    });
-  }
-
-  function highlightPreviewRange(anchor, hover) {
-    if (!anchor || !hover) return;
-    var start = anchor <= hover ? anchor : hover;
-    var end = anchor <= hover ? hover : anchor;
-
-    var allCells = document.querySelectorAll('.cal-cell');
-    allCells.forEach(function(c) {
-      var d = c.dataset.date;
-      c.classList.remove('cal-selected-start', 'cal-selected-end', 'cal-in-range', 'cal-selected-single');
-      if (start === end) {
-        if (d === start) c.classList.add('cal-selected-single');
-      } else {
-        if (d === start) c.classList.add('cal-selected-start');
-        else if (d === end) c.classList.add('cal-selected-end');
-        else if (d > start && d < end) c.classList.add('cal-in-range');
-      }
-    });
-  }
-
-  function finalizeSelection() {
-    isDragging = false;
-    if (!selectionAnchor || !selectionHover) return;
-
-    var checkIn = selectionAnchor <= selectionHover ? selectionAnchor : selectionHover;
-    var checkOut = selectionAnchor <= selectionHover ? selectionHover : selectionAnchor;
-
-    if (checkIn === checkOut) {
-      handleCellClick(checkIn);
-      return;
-    }
-
-    applyConfirmedDateRange(checkIn, checkOut);
-    selectionAnchor = null;
-    selectionHover = null;
-  }
-
-  function handleCellClick(iso) {
-    var inInput = document.getElementById('checkInDate');
-    var outInput = document.getElementById('checkOutDate');
-
-    if (!inInput.value || (inInput.value && outInput.value)) {
-      inInput.value = iso;
-      outInput.value = '';
-      outInput.min = iso;
-      hideStaySummary();
-      renderCalendar();
-      announceStatus('Selected check-in date: ' + iso + '. Now select check-out date.');
-    } else {
-      var existingIn = inInput.value;
-      if (iso <= existingIn) {
-        inInput.value = iso;
-        outInput.value = '';
-        outInput.min = iso;
-        hideStaySummary();
-        renderCalendar();
-        announceStatus('Updated check-in date: ' + iso + '. Now select check-out date.');
-      } else {
-        applyConfirmedDateRange(existingIn, iso);
-      }
-    }
-  }
-
-  function applyConfirmedDateRange(checkIn, checkOut) {
-    var statusMsg = document.getElementById('statusMessage');
-    var inInput = document.getElementById('checkInDate');
-    var outInput = document.getElementById('checkOutDate');
-
-    if (checkIn < todayStr) {
-      statusMsg.textContent = "⚠️ Check-in date cannot be in the past.";
-      statusMsg.style.color = "#b91c1c";
-      return;
-    }
-
-    if (rangeHasConflict(checkIn, checkOut)) {
-      statusMsg.textContent = "⚠️ The selected date range overlaps with an existing reservation. Please select available dates.";
-      statusMsg.style.color = "#b91c1c";
-      renderCalendar();
-      return;
-    }
-
-    statusMsg.textContent = '';
-    isInternalCalendarSync = true;
-    inInput.value = checkIn;
-    outInput.value = checkOut;
-    outInput.min = checkIn;
-    isInternalCalendarSync = false;
-
-    updateStaySummary();
-    announceStatus('Selected check-in: ' + checkIn + ', check-out: ' + checkOut);
-    renderCalendar();
-  }
-
-  function onBookedRangesLoaded(ranges) {
-    hideCalendarError();
-    currentBookedRanges = ranges || [];
-    announceStatus("Google Calendar availability updated.");
-    renderCalendar();
-  }
-
   function onDateInputChange() {
     var inVal = document.getElementById('checkInDate').value;
     var outVal = document.getElementById('checkOutDate').value;
@@ -654,24 +294,20 @@
         document.getElementById('statusMessage').textContent = "⚠️ Check-out date must be after check-in date.";
         document.getElementById('statusMessage').style.color = "#b91c1c";
         hideStaySummary();
-        renderCalendar();
         return;
       }
       if (rangeHasConflict(inVal, outVal)) {
         document.getElementById('statusMessage').textContent = "⚠️ Selected range overlaps with an existing reservation on Google Calendar.";
         document.getElementById('statusMessage').style.color = "#b91c1c";
         hideStaySummary();
-        renderCalendar();
         return;
       }
 
       document.getElementById('statusMessage').textContent = "";
       updateStaySummary();
       announceStatus('Selected check-in: ' + inVal + ', check-out: ' + outVal);
-      renderCalendar();
     } else {
       hideStaySummary();
-      renderCalendar();
     }
   }
 
@@ -1752,7 +1388,14 @@
     if (guestCountSelect && guests) {
       guestCountSelect.value = String(guests);
     }
-    applyConfirmedDateRange(start, end);
+    var inInput = document.getElementById('checkInDate');
+    var outInput = document.getElementById('checkOutDate');
+    if (inInput) inInput.value = start;
+    if (outInput) {
+      outInput.value = end;
+      outInput.min = start;
+    }
+    updateStaySummary();
     toggleAiChatDrawer(false);
     var formEl = document.getElementById('bookingForm');
     if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
