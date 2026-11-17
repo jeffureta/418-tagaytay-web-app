@@ -213,9 +213,9 @@ describe('Google Apps Script HtmlService Preprocessor & Dynamic Pricing Verifica
 
     // Test in-memory calculateNightlyPrice from sandbox
     const priceResult = vm.runInContext("calculateNightlyPrice('2026-12-25')", context);
-    assert.equal(priceResult.savings, 500);
+    assert.equal(priceResult.savings, 0);
     assert.equal(priceResult.marketRate, 3840);
-    assert.equal(priceResult.unitRate, 3340);
+    assert.equal(priceResult.unitRate, 3840);
 
     // Test in-memory updateStaySummary with dynamic pricing
     elements['checkInDate'].value = '2026-11-10';
@@ -224,14 +224,14 @@ describe('Google Apps Script HtmlService Preprocessor & Dynamic Pricing Verifica
     vm.runInContext("updateStaySummary()", context);
 
     assert.equal(elements['staySummaryCard'].style.display, 'flex');
-    assert.ok(elements['summaryTotalPrice'].textContent.includes('₱14,960'));
+    assert.ok(elements['summaryTotalPrice'].textContent.includes('₱16,960'));
     assert.equal(elements['summaryExtraGuestRow'].style.display, 'flex');
 
     // Test confirmation and link generation
-    vm.runInContext("setupGoogleCalendarLink('CND-1234', 14960)", context);
+    vm.runInContext("setupGoogleCalendarLink('CND-1234', 16960)", context);
     const gcalUrl = elements['addToGoogleCalBtn'].href;
     assert.ok(gcalUrl.includes('Unit%20418') || gcalUrl.includes('Unit 418'));
-    assert.ok(gcalUrl.includes('14%2C960') || gcalUrl.includes('14,960'));
+    assert.ok(gcalUrl.includes('16%2C960') || gcalUrl.includes('16,960'));
 
     // Test 1-tap date selection in sandbox
     elements['checkInDate'].value = '2026-12-15';

@@ -24,7 +24,7 @@ export const BASE_MARKET_RATES = {
   PEAK: 8000
 };
 
-export const COMPETITOR_UNDERCUT_PHP = 500;
+export const COMPETITOR_UNDERCUT_PHP = 0;
 
 export const SEASONS = {
   AMIHAN_COOL: {
@@ -188,8 +188,7 @@ export function calculateNightlyPrice(dateStr, marketAverageOverride = ONLINE_AV
 
   // Use the online average market rate from the database (or override)
   const adjustedMarket = Math.round(marketAverageOverride);
-  // Unit 418 rate is strictly 500 PHP below the online average
-  const unitRate = adjustedMarket - COMPETITOR_UNDERCUT_PHP;
+  const unitRate = adjustedMarket;
 
   return {
     dateStr,
@@ -201,7 +200,7 @@ export function calculateNightlyPrice(dateStr, marketAverageOverride = ONLINE_AV
     holidayName: holiday,
     marketRate: adjustedMarket,
     unitRate,
-    savings: COMPETITOR_UNDERCUT_PHP
+    savings: 0
   };
 }
 
@@ -243,8 +242,8 @@ export function calculateStayQuote(checkInStr, checkOutStr, guestCount = 2, mark
   const longStayDiscountAmount = 0;
   const extraGuestFeeTotal = extraGuests * PROPERTY_INFO.extraGuestFeePerNight * nights;
   const totalPrice = baseUnitSubtotal + extraGuestFeeTotal;
-  const competitorUndercutSavings = COMPETITOR_UNDERCUT_PHP * nights;
-  const totalSavingsVsMarket = competitorUndercutSavings;
+  const competitorUndercutSavings = 0;
+  const totalSavingsVsMarket = 0;
   const averageNightlyRate = Math.round(totalPrice / nights);
 
   return {
