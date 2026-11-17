@@ -46,9 +46,12 @@ describe('418-serin-tagaytay-chat-bot Integration & 5 Responsive Viewport Contra
       assert.match(rawWidget, /id="chatbotSendBtn"/, 'Must contain #chatbotSendBtn');
     });
 
-    test('ChatBotWidget.html cleanly removes engine badge and header title', () => {
+    test('ChatBotWidget.html cleanly renders header title and launcher hide contract', () => {
+      // ChatBotWidget header title and launcher toggle contracts
+      assert.match(rawWidget, /class="chatbot-title">Chat Bot<\/span>/);
+      assert.match(rawWidget, /launcher\.classList\.add\('is-hidden'\)/);
+      assert.match(rawWidget, /launcher\.classList\.remove\('is-hidden'\)/);
       assert.doesNotMatch(rawWidget, /id="engineBadge"/);
-      assert.doesNotMatch(rawWidget, /id="chatbotHeaderTitle"/);
       assert.doesNotMatch(rawWidget, /Deterministic NLU/);
       assert.match(rawWidget, /aria-label="Chat Bot"/);
     });
