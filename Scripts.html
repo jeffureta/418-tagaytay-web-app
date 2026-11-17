@@ -32,7 +32,7 @@
      ZERO-LATENCY DETERMINISTIC DYNAMIC PRICING ENGINE (ES5-COMPLIANT)
      ========================================================================== */
   var ONLINE_AVERAGE_MARKET_RATE = 3840;
-  var COMPETITOR_UNDERCUT_PHP = 500;
+  var COMPETITOR_UNDERCUT_PHP = 0;
   var PH_HOLIDAYS_AND_EVENTS = {
     '01-01': "New Year's Day",
     '02-14': "Valentine's Day Peak",
@@ -182,7 +182,7 @@
       : ONLINE_AVERAGE_MARKET_RATE;
 
     var marketRate = Math.round(baseOnlineAvg);
-    var unitRate = marketRate - COMPETITOR_UNDERCUT_PHP; // Guaranteed -₱500/night savings
+    var unitRate = marketRate;
 
     return {
       dateStr: dateStr,
@@ -191,7 +191,7 @@
       season: season,
       marketRate: marketRate,
       unitRate: unitRate,
-      savings: COMPETITOR_UNDERCUT_PHP
+      savings: 0
     };
   }
 
@@ -225,8 +225,8 @@
     var discountAmount = 0;
     var extraGuestFee = extraGuests * 400 * nights;
     var totalPrice = baseUnitSubtotal + extraGuestFee;
-    var competitorSavings = 500 * nights;
-    var totalSavings = competitorSavings;
+    var competitorSavings = 0;
+    var totalSavings = 0;
 
     return {
       checkIn: checkInStr,
@@ -646,9 +646,25 @@
       'at <strong>' + CONDO_UNIT_NAME + '</strong> from <strong>' + data.startDate + '</strong> to <strong>' + data.endDate + '</strong> is confirmed.<br><br>' +
       '<strong>Location:</strong> ' + CONDO_FULL_ADDRESS + '<br>' +
       '<strong>Reference ID:</strong> #' + ref + '<br>' +
-      '<strong>Confirmed Total:</strong> ' + totalStr + ' <em>(Guaranteed savings: ' + savingsStr + ' vs 10km Tagaytay market)</em><br><br>' +
+      '<strong>Confirmed Total:</strong> ' + totalStr + '<br><br>' +
       'A confirmation email with full staycation check-in details has been dispatched to <em>' + escapeHtml(data.guestEmail) + '</em>.<br>' +
       'Your stay is scheduled in Google Calendar.';
+
+    // Cache confirmed guest status and active booking for multi-device recovery
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('condo_guest_status', 'confirmed');
+        localStorage.setItem('condo_active_booking', JSON.stringify({
+          referenceId: ref,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          guestName: data.guestName
+        }));
+      }
+      if (typeof CondoChatbotWidget !== 'undefined' && CondoChatbotWidget.setGuestStatus) {
+        CondoChatbotWidget.setGuestStatus('confirmed');
+      }
+    } catch (e) {}
 
     setupGoogleCalendarLink(ref, totalAmount);
     announceStatus('Reservation confirmed! Reference ID is ' + ref + '.');

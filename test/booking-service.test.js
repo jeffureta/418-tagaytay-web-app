@@ -54,8 +54,8 @@ describe('Booking Service Domain Logic (TDD)', () => {
     assert.ok(body.includes('Check-in Date: 2026-12-20 (3:00 PM)'));
     assert.ok(body.includes('Check-out Date: 2026-12-23 (11:00 AM)'));
     assert.ok(body.includes('Number of Guests: 4'));
-    assert.ok(body.includes('Pricing & Staycation Savings Breakdown:'));
-    assert.ok(body.includes('-₱500/night dynamic discount'));
+    assert.ok(body.includes('Pricing Breakdown:'));
+    assert.ok(!body.includes('-₱500/night dynamic discount'));
     assert.ok(body.includes('Total Confirmed Amount:'));
   });
 

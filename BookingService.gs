@@ -4,7 +4,6 @@
  */
 
 var ONLINE_AVERAGE_MARKET_RATE = 3840;
-var COMPETITOR_UNDERCUT_PHP = 500;
 
 /**
  * Calculates server-side stay quote for Unit 418 Serin East Tagaytay.
@@ -23,7 +22,7 @@ function calculateServerStayQuote(startDateStr, endDateStr, guestCount) {
 
   for (var i = 0; i < nights; i++) {
     var marketRate = Math.round(ONLINE_AVERAGE_MARKET_RATE);
-    var unitRate = marketRate - COMPETITOR_UNDERCUT_PHP;
+    var unitRate = marketRate;
 
     marketSubtotal += marketRate;
     baseUnitSubtotal += unitRate;
@@ -39,7 +38,7 @@ function calculateServerStayQuote(startDateStr, endDateStr, guestCount) {
     guestCount: guests,
     marketSubtotal: marketSubtotal,
     baseUnitSubtotal: baseUnitSubtotal,
-    totalSavings: COMPETITOR_UNDERCUT_PHP * nights,
+    totalSavings: 0,
     discountAmount: discountAmount,
     extraGuestFee: extraGuestFee,
     totalPrice: totalPrice
@@ -94,7 +93,6 @@ function createBooking(data) {
       'Check-in: ' + data.startDate + ' (3:00 PM)',
       'Check-out: ' + data.endDate + ' (11:00 AM)',
       'Total Price: ' + totalAmountStr,
-      'Competitor Savings (-₱500/night): ' + savingsStr,
       'Status: Confirmed'
     ].join('\n');
 

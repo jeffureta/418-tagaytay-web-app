@@ -46,9 +46,11 @@ describe('418-serin-tagaytay-chat-bot Integration & 5 Responsive Viewport Contra
       assert.match(rawWidget, /id="chatbotSendBtn"/, 'Must contain #chatbotSendBtn');
     });
 
-    test('ChatBotWidget.html detects Chrome window.ai / Gemini Nano engine badge', () => {
-      assert.match(rawWidget, /window\.ai\s*&&\s*window\.ai\.languageModel/);
-      assert.match(rawWidget, /id="engineBadge"/);
+    test('ChatBotWidget.html cleanly removes engine badge and header title', () => {
+      assert.doesNotMatch(rawWidget, /id="engineBadge"/);
+      assert.doesNotMatch(rawWidget, /id="chatbotHeaderTitle"/);
+      assert.doesNotMatch(rawWidget, /Deterministic NLU/);
+      assert.match(rawWidget, /aria-label="Chat Bot"/);
     });
   });
 

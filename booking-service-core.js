@@ -45,10 +45,9 @@ export function formatGuestEmail(data, refId) {
     + `Check-out Date: ${data.endDate} (11:00 AM)\n`
     + `Number of Guests: ${data.guestCount}\n`
     + `-------------------------------------\n\n`
-    + `Pricing & Staycation Savings Breakdown:\n`
+    + `Pricing Breakdown:\n`
     + `-------------------------------------\n`
-    + `10km Market Benchmark: ${marketSubStr}\n`
-    + `Guaranteed Competitor Savings: -${savingsStr} (-₱500/night dynamic discount)\n`
+    + `Nightly Rate Subtotal: ${marketSubStr}\n`
     + (quote && quote.longStayDiscountAmount > 0 ? `Multi-Night Staycation Discount: -${formatPhp(quote.longStayDiscountAmount)} (${quote.longStayDiscountLabel})\n` : '')
     + (quote && quote.extraGuestFeeTotal > 0 ? `Extra Guest Fee (5-6 pax): +${formatPhp(quote.extraGuestFeeTotal)}\n` : '')
     + `Total Confirmed Amount: ${totalStr}\n`

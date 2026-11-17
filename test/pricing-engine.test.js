@@ -33,7 +33,7 @@ describe('Zero-Latency Dynamic Pricing Engine with Live DB Average (TDD)', () =>
 
   test('ONLINE_AVERAGE_MARKET_RATE and COMPETITOR_UNDERCUT_PHP reflect DB pricing rules', () => {
     assert.equal(ONLINE_AVERAGE_MARKET_RATE, 3840);
-    assert.equal(COMPETITOR_UNDERCUT_PHP, 500);
+    assert.equal(COMPETITOR_UNDERCUT_PHP, 0);
   });
 
   test('getSeasonForDate accurately classifies Tagaytay microclimate seasons', () => {
@@ -58,7 +58,7 @@ describe('Zero-Latency Dynamic Pricing Engine with Live DB Average (TDD)', () =>
     assert.equal(getHolidayOrEvent('2026-11-18'), null);
   });
 
-  test('calculateNightlyPrice sets marketRate to DB average (3840) and unitRate to 500 less (3340)', () => {
+  test('calculateNightlyPrice sets marketRate to DB average (3840) and unitRate with 0 undercut', () => {
     const testDates = [
       '2026-11-10', // Weekday
       '2026-11-14', // Weekend
@@ -69,58 +69,58 @@ describe('Zero-Latency Dynamic Pricing Engine with Live DB Average (TDD)', () =>
     for (const d of testDates) {
       const price = calculateNightlyPrice(d);
       assert.equal(price.marketRate, 3840, `marketRate for ${d} should match online average 3840`);
-      assert.equal(price.savings, 500, `Savings for ${d} must be 500`);
-      assert.equal(price.unitRate, 3340, `unitRate for ${d} should be 3840 - 500 = 3340`);
+      assert.equal(price.savings, 0, `Savings for ${d} must be 0`);
+      assert.equal(price.unitRate, 3840, `unitRate for ${d} should equal market rate 3840`);
     }
   });
 
   test('calculateNightlyPrice supports custom market average override', () => {
     const custom = calculateNightlyPrice('2026-11-10', 4000);
     assert.equal(custom.marketRate, 4000);
-    assert.equal(custom.unitRate, 3500);
-    assert.equal(custom.savings, 500);
+    assert.equal(custom.unitRate, 4000);
+    assert.equal(custom.savings, 0);
   });
 
-  test('calculateStayQuote calculates total, multi-night discount, and extra guest fees based on 3340/night', () => {
+  test('calculateStayQuote calculates total, multi-night discount, and extra guest fees based on 3840/night', () => {
     // 2-night stay for 2 guests
-    // Nightly rate: 3340. Subtotal: 6680. Market: 7680. Savings: 1000.
+    // Nightly rate: 3840. Subtotal: 7680. Market: 7680. Savings: 0.
     const quote2Nights = calculateStayQuote('2026-11-10', '2026-11-12', 2);
     assert.equal(quote2Nights.nights, 2);
     assert.equal(quote2Nights.guestCount, 2);
     assert.equal(quote2Nights.extraGuests, 0);
     assert.equal(quote2Nights.marketSubtotal, 7680);
-    assert.equal(quote2Nights.baseUnitSubtotal, 6680);
-    assert.equal(quote2Nights.competitorUndercutSavings, 1000);
+    assert.equal(quote2Nights.baseUnitSubtotal, 7680);
+    assert.equal(quote2Nights.competitorUndercutSavings, 0);
     assert.equal(quote2Nights.longStayDiscountAmount, 0);
     assert.equal(quote2Nights.extraGuestFeeTotal, 0);
-    assert.equal(quote2Nights.totalPrice, 6680);
-    assert.equal(quote2Nights.totalSavingsVsMarket, 1000);
+    assert.equal(quote2Nights.totalPrice, 7680);
+    assert.equal(quote2Nights.totalSavingsVsMarket, 0);
 
     // 4-night stay for 5 guests
-    // Base unit subtotal: 4 * 3340 = 13360
+    // Base unit subtotal: 4 * 3840 = 15360
     // Multi-night discount removed: 0
     // Extra guest fee: 1 extra guest * 400 * 4 nights = 1600
-    // Total price = 13360 + 1600 = 14960
+    // Total price = 15360 + 1600 = 16960
     const quote4Nights5Guests = calculateStayQuote('2026-11-10', '2026-11-14', 5);
     assert.equal(quote4Nights5Guests.nights, 4);
     assert.equal(quote4Nights5Guests.extraGuests, 1);
-    assert.equal(quote4Nights5Guests.baseUnitSubtotal, 13360);
+    assert.equal(quote4Nights5Guests.baseUnitSubtotal, 15360);
     assert.equal(quote4Nights5Guests.longStayDiscountRate, 0);
     assert.equal(quote4Nights5Guests.longStayDiscountAmount, 0);
     assert.equal(quote4Nights5Guests.longStayDiscountLabel, null);
     assert.equal(quote4Nights5Guests.extraGuestFeeTotal, 1600);
-    assert.equal(quote4Nights5Guests.totalPrice, 14960);
+    assert.equal(quote4Nights5Guests.totalPrice, 16960);
 
     // 7-night stay (multi-night discounts removed)
-    // Base: 7 * 3340 = 23380
+    // Base: 7 * 3840 = 26880
     // Discount: 0
-    // Total for 4 guests: 23380
+    // Total for 4 guests: 26880
     const quote7Nights = calculateStayQuote('2026-11-10', '2026-11-17', 4);
     assert.equal(quote7Nights.nights, 7);
-    assert.equal(quote7Nights.baseUnitSubtotal, 23380);
+    assert.equal(quote7Nights.baseUnitSubtotal, 26880);
     assert.equal(quote7Nights.longStayDiscountRate, 0);
     assert.equal(quote7Nights.longStayDiscountAmount, 0);
     assert.equal(quote7Nights.longStayDiscountLabel, null);
-    assert.equal(quote7Nights.totalPrice, 23380);
+    assert.equal(quote7Nights.totalPrice, 26880);
   });
 });

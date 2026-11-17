@@ -21,50 +21,57 @@ var ChatBotSdk = (function() {
   "menu_tree": {
     "root": {
       "id": "root",
-      "title": "Welcome to Unit 418 Serin East Tagaytay!",
-      "message": "Hello! I am your 24/7 Concierge for Unit 418 Serin East Tagaytay. How can I assist you today? Please choose an option below or type your question in English, Tagalog, or Taglish.",
+      "title": "Unit 418 Serin East Tagaytay",
+      "message": "",
       "options": [
         {
           "id": "opt_booking",
-          "label": "📅 Rates & How to Book",
+          "label": "📅 How much are the rates",
           "icon": "📅",
-          "target": "menu_booking"
+          "target": "menu_booking",
+          "tier": "unbooked"
         },
         {
           "id": "opt_parking",
-          "label": "🚗 Parking Details (Free vs ₱350)",
+          "label": "🚗 Parking details",
           "icon": "🚗",
-          "target": "res_parking"
+          "target": "res_parking",
+          "tier": "unbooked"
         },
         {
           "id": "opt_checkin",
           "label": "🔑 Check-In & Smart Lock Code",
           "icon": "🔑",
-          "target": "res_checkin"
+          "target": "res_checkin",
+          "tier": "confirmed"
         },
         {
           "id": "opt_endorsement",
           "label": "📋 Admin Endorsement (Carrd Link)",
           "icon": "📋",
-          "target": "res_endorsement"
+          "target": "res_endorsement",
+          "tier": "confirmed"
         },
         {
           "id": "opt_rules",
           "label": "🍳 Kitchen & House Rules",
           "icon": "🍳",
-          "target": "res_rules"
+          "target": "res_rules",
+          "tier": "confirmed"
         },
         {
           "id": "opt_amenities",
           "label": "🏊 Pool, Wi-Fi & Appliances",
           "icon": "🏊",
-          "target": "res_amenities"
+          "target": "res_amenities",
+          "tier": "confirmed"
         },
         {
           "id": "opt_contact",
           "label": "📞 Contact Host & Caretaker",
           "icon": "📞",
-          "target": "res_contact"
+          "target": "res_contact",
+          "tier": "confirmed"
         }
       ]
     },
@@ -75,7 +82,7 @@ var ChatBotSdk = (function() {
       "options": [
         {
           "id": "sub_direct",
-          "label": "🏷️ Direct Booking Discount (-₱500/night)",
+          "label": "🏷️ Direct Booking Rates",
           "icon": "🏷️",
           "target": "res_booking_direct"
         },
@@ -192,8 +199,8 @@ var ChatBotSdk = (function() {
     },
     "res_booking_direct": {
       "id": "res_booking_direct",
-      "title": "Direct Booking Discount",
-      "text": "🏷️ **Direct Booking Advantage**:\n\nBook directly with us to save service platform fees! We offer a guaranteed **₱500/night discount** compared to prevailing 10km Tagaytay 2-bedroom OTA market rates.\n\n• **Payment Channels**: BDO / BPI Philippine Bank Transfer or GCash.\n• **Security Deposit**: ₱3,000 refundable security deposit (refunded promptly after checkout inspection).",
+      "title": "Direct Booking",
+      "text": "🏷️ **Direct Booking Advantage**:\n\nBook directly through our website to secure instant reservation confirmation with no platform service fees!\n\n• **Payment Channels**: BDO / BPI Philippine Bank Transfer or GCash.\n• **Security Deposit**: ₱3,000 refundable security deposit (refunded promptly after checkout inspection).",
       "actions": [
         {
           "label": "💬 Inquire for Dates",
@@ -379,8 +386,33 @@ var ChatBotSdk = (function() {
     }
   }
 
-  OptionTree.prototype.getMenu = function(id) {
-    return this.menus[id || 'root'] || null;
+  OptionTree.prototype.getMenu = function(id, options) {
+    var menuId = id || 'root';
+    var menu = this.menus[menuId];
+    if (!menu) return null;
+
+    options = options || {};
+    var guestStatus = options.guestStatus || 'unbooked';
+
+    if (menuId === 'root' && Array.isArray(menu.options)) {
+      if (guestStatus === 'confirmed') {
+        return menu;
+      }
+      var filtered = [];
+      for (var f = 0; f < menu.options.length; f++) {
+        if (menu.options[f].tier === 'unbooked') {
+          filtered.push(menu.options[f]);
+        }
+      }
+      return {
+        id: menu.id,
+        title: menu.title,
+        message: menu.message,
+        options: filtered
+      };
+    }
+
+    return menu;
   };
 
   OptionTree.prototype.resolveOption = function(optionId) {
@@ -415,7 +447,7 @@ var ChatBotSdk = (function() {
     createCore: function() {
       var tree = new OptionTree();
       return {
-        getMenu: function(id) { return tree.getMenu(id); },
+        getMenu: function(id, options) { return tree.getMenu(id, options); },
         resolveOption: function(id) { return tree.resolveOption(id); },
         matchFaq: function(query) { return matchFaq(query); }
       };

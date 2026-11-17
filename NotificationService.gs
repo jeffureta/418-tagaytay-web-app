@@ -27,10 +27,9 @@ function sendGuestConfirmationEmail(data, refId, quote) {
     + 'Check-out Date: ' + data.endDate + ' (11:00 AM)\n'
     + 'Number of Guests: ' + data.guestCount + '\n'
     + '-------------------------------------\n\n'
-    + 'Pricing & Staycation Savings Breakdown:\n'
+    + 'Pricing Breakdown:\n'
     + '-------------------------------------\n'
-    + '10km Market Benchmark: ' + marketSubStr + '\n'
-    + 'Guaranteed Competitor Savings: -' + savingsStr + ' (-₱500/night dynamic discount)\n'
+    + 'Nightly Rate Subtotal: ' + marketSubStr + '\n'
     + (quote && quote.discountAmount > 0 ? ('Multi-Night Staycation Discount: -₱' + Math.round(quote.discountAmount).toLocaleString('en-US') + '\n') : '')
     + (quote && quote.extraGuestFee > 0 ? ('Extra Guest Fee (5-6 pax): +₱' + Math.round(quote.extraGuestFee).toLocaleString('en-US') + '\n') : '')
     + 'Total Confirmed Amount: ' + totalStr + '\n'
