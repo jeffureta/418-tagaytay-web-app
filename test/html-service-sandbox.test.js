@@ -207,9 +207,9 @@ describe('Google Apps Script HtmlService Preprocessor & Dynamic Pricing Verifica
     const context = vm.createContext(sandbox);
     vm.runInContext(processedCode, context);
 
-    // Verify bootstrap execution
-    assert.ok(elements['customCalendarGrid'].children.length > 0, 'customCalendarGrid should have day cells rendered');
-    assert.ok(elements['calMonthTitle'].textContent.length > 0, 'calMonthTitle should have month and year text');
+    // Verify bootstrap execution: checkInDate and checkOutDate bounds initialized
+    assert.ok(elements['checkInDate'].min.length >= 10, 'checkInDate min date should be initialized');
+    assert.ok(elements['checkOutDate'].min.length >= 10, 'checkOutDate min date should be initialized');
 
     // Test in-memory calculateNightlyPrice from sandbox
     const priceResult = vm.runInContext("calculateNightlyPrice('2026-12-25')", context);

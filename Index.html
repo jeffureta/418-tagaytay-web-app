@@ -22,55 +22,9 @@
   </header>
 
   <main class="booking-main">
-    <div id="srAnnouncement" class="sr-only" role="status" aria-live="polite">Google Calendar loaded.</div>
+    <div id="srAnnouncement" class="sr-only" role="status" aria-live="polite">Unit 418 Reservation system loaded.</div>
 
     <form id="bookingForm" onsubmit="submitReservation(event)" novalidate>
-      <div class="form-group">
-        <label id="calendarLabel">
-          Interactive Availability & Dynamic Pricing Calendar (Tap or Click Dates)
-        </label>
-        
-        <div class="calendar-card" aria-labelledby="calendarLabel">
-          <div class="calendar-card-header">
-            <div class="cal-nav-group">
-              <button type="button" id="calPrevBtn" class="cal-nav-btn" aria-label="Previous Month">&lsaquo;</button>
-              <h2 id="calMonthTitle" class="cal-month-title">Month Year</h2>
-              <button type="button" id="calNextBtn" class="cal-nav-btn" aria-label="Next Month">&rsaquo;</button>
-            </div>
-            <div class="calendar-legend" aria-hidden="true">
-              <span class="legend-item"><span class="legend-badge badge-available"></span> Available & Priced</span>
-              <span class="legend-item"><span class="legend-badge badge-booked"></span> Booked</span>
-              <span class="legend-item"><span class="legend-badge badge-selected"></span> Selected</span>
-            </div>
-          </div>
-
-          <!-- Inline Accessible Error Alert Banner -->
-          <div id="calendarErrorBanner" class="cal-error-banner" role="alert" style="display: none;" aria-live="assertive">
-            <div class="cal-error-content">
-              <span class="cal-error-icon" aria-hidden="true">⚠️</span>
-              <span id="calendarErrorMessage" class="cal-error-text">Unable to load live availability.</span>
-            </div>
-            <button type="button" id="calendarRetryBtn" class="cal-retry-btn" onclick="retryFetchAvailability()">
-              Retry
-            </button>
-          </div>
-
-          <div class="cal-weekdays-row" aria-hidden="true">
-            <div class="cal-weekday">Sun</div>
-            <div class="cal-weekday">Mon</div>
-            <div class="cal-weekday">Tue</div>
-            <div class="cal-weekday">Wed</div>
-            <div class="cal-weekday">Thu</div>
-            <div class="cal-weekday">Fri</div>
-            <div class="cal-weekday">Sat</div>
-          </div>
-
-          <div id="customCalendarGrid" class="cal-days-grid" role="grid" aria-label="Condo Availability & Pricing Calendar Grid">
-            <!-- Dynamically populated day cells with prices -->
-          </div>
-        </div>
-      </div>
-
       <!-- Date Selection Section -->
       <div class="form-row">
         <div class="form-group">
