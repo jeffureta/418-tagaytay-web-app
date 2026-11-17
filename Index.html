@@ -24,6 +24,11 @@
   <main class="booking-main">
     <div id="srAnnouncement" class="sr-only" role="status" aria-live="polite">Unit 418 Reservation system loaded.</div>
 
+    <!-- Universal Responsive Booking Calendar Web Component -->
+    <div class="calendar-component-wrapper" style="margin-bottom: 24px;">
+      <condo-booking-calendar id="condoBookingCalendar" channel="direct" guests="2"></condo-booking-calendar>
+    </div>
+
     <form id="bookingForm" onsubmit="submitReservation(event)" novalidate>
       <!-- Date Selection Section -->
       <div class="form-row">
@@ -235,6 +240,7 @@
   </form>
 </div>
 
+<?!= include('BookingCalendarWidget'); ?>
 <?!= include('Scripts'); ?>
 
 </body>

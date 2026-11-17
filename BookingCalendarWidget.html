@@ -1,0 +1,665 @@
+<script>
+
+    /**
+ * Zero-dependency Web Component for Unit 418 Serin East Tagaytay.
+ * Tag: <condo-booking-calendar>
+ *
+ * Responsive Ergonomics:
+ * - Desktop / Laptop (>1024px): 2-month side-by-side view with sticky quote sidebar.
+ * - iPad / Tablet (641px - 1024px): Touch-first grid, adaptive 2-month or 1-month.
+ * - Foldable & Dual-Screen (@media (screen-spanning: single-fold-vertical)): Spanning hinge.
+ * - iPhone & Android (<640px): 1-month swipeable carousel, 48px tap targets, haptic feedback,
+ *   and sticky bottom quote bar with iOS safe-area support.
+ */
+
+class CondoBookingCalendar extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+
+    const now = new Date();
+    this.state = {
+      currentYear: now.getFullYear(),
+      currentMonth: now.getMonth(), // 0-indexed
+      checkInDate: null,
+      checkOutDate: null,
+      guests: 2,
+      coveredParking: false,
+      channel: 'direct',
+      baseRate: 3340,
+      quote: null,
+      busyDates: new Set(['2026-12-24', '2026-12-25', '2026-12-31', '2027-01-01'])
+    };
+
+    this.touchStartX = 0;
+    this.touchEndX = 0;
+  }
+
+  static get observedAttributes() {
+    return ['channel', 'guests', 'parking'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      if (name === 'channel') this.state.channel = newValue || 'direct';
+      if (name === 'guests') this.state.guests = parseInt(newValue, 10) || 2;
+      if (name === 'parking') this.state.coveredParking = newValue === 'true';
+      this.recalculateQuote();
+      this.render();
+    }
+  }
+
+  connectedCallback() {
+    this.recalculateQuote();
+    this.render();
+    this.attachEventListeners();
+  }
+
+  recalculateQuote() {
+    if (!this.state.checkInDate || !this.state.checkOutDate) {
+      this.state.quote = null;
+      return;
+    }
+
+    const d1 = new Date(this.state.checkInDate);
+    const d2 = new Date(this.state.checkOutDate);
+    const diffTime = d2.getTime() - d1.getTime();
+    const nights = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)));
+
+    const rate = this.state.baseRate;
+    const staySubtotal = nights * rate;
+    const parkingFee = this.state.coveredParking ? nights * 350 : 0;
+    const extraGuests = Math.max(0, this.state.guests - 4);
+    const extraGuestFee = extraGuests * 400 * nights;
+    const deposit = this.state.channel === 'airbnb' ? 0 : 3000;
+    const totalDue = staySubtotal + parkingFee + extraGuestFee + deposit;
+
+    this.state.quote = {
+      nights,
+      rate,
+      staySubtotal,
+      parkingFee,
+      extraGuestFee,
+      deposit,
+      totalDue,
+      aircoverWaived: this.state.channel === 'airbnb'
+    };
+
+    this.dispatchEvent(new CustomEvent('quote-updated', {
+      detail: this.state.quote,
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  selectDate(dateStr) {
+    if (this.state.busyDates.has(dateStr)) return;
+
+    // Trigger haptic feedback if supported on mobile
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      try { navigator.vibrate(10); } catch (e) {}
+    }
+
+    if (!this.state.checkInDate || (this.state.checkInDate && this.state.checkOutDate)) {
+      this.state.checkInDate = dateStr;
+      this.state.checkOutDate = null;
+    } else {
+      if (new Date(dateStr) < new Date(this.state.checkInDate)) {
+        this.state.checkInDate = dateStr;
+        this.state.checkOutDate = null;
+      } else if (dateStr === this.state.checkInDate) {
+        this.state.checkOutDate = null;
+      } else {
+        this.state.checkOutDate = dateStr;
+      }
+    }
+
+    this.recalculateQuote();
+    this.render();
+
+    this.dispatchEvent(new CustomEvent('date-selected', {
+      detail: {
+        checkIn: this.state.checkInDate,
+        checkOut: this.state.checkOutDate
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  prevMonth() {
+    if (this.state.currentMonth === 0) {
+      this.state.currentMonth = 11;
+      this.state.currentYear--;
+    } else {
+      this.state.currentMonth--;
+    }
+    this.render();
+  }
+
+  nextMonth() {
+    if (this.state.currentMonth === 11) {
+      this.state.currentMonth = 0;
+      this.state.currentYear++;
+    } else {
+      this.state.currentMonth++;
+    }
+    this.render();
+  }
+
+  submitBooking() {
+    if (!this.state.checkInDate || !this.state.checkOutDate) return;
+    this.dispatchEvent(new CustomEvent('booking-submitted', {
+      detail: {
+        checkIn: this.state.checkInDate,
+        checkOut: this.state.checkOutDate,
+        guests: this.state.guests,
+        coveredParking: this.state.coveredParking,
+        channel: this.state.channel,
+        quote: this.state.quote
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  renderMonth(year, month) {
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    let daysHtml = '';
+    for (let i = 0; i < firstDay; i++) {
+      daysHtml += `<div class="day-cell empty"></div>`;
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const monthStr = String(month + 1).padStart(2, '0');
+      const dayStr = String(day).padStart(2, '0');
+      const dateStr = `${year}-${monthStr}-${dayStr}`;
+
+      const isBusy = this.state.busyDates.has(dateStr);
+      const isCheckIn = this.state.checkInDate === dateStr;
+      const isCheckOut = this.state.checkOutDate === dateStr;
+      const inRange = this.state.checkInDate && this.state.checkOutDate &&
+        new Date(dateStr) > new Date(this.state.checkInDate) &&
+        new Date(dateStr) < new Date(this.state.checkOutDate);
+
+      let classes = ['day-cell'];
+      if (isBusy) classes.push('busy');
+      if (isCheckIn) classes.push('check-in');
+      if (isCheckOut) classes.push('check-out');
+      if (inRange) classes.push('in-range');
+
+      daysHtml += `
+        <button type="button" class="${classes.join(' ')}" data-date="${dateStr}" ${isBusy ? 'disabled' : ''}>
+          <span class="day-number">${day}</span>
+          ${isCheckIn ? '<span class="turnover-tag">2PM</span>' : ''}
+          ${isCheckOut ? '<span class="turnover-tag">12NN</span>' : ''}
+        </button>
+      `;
+    }
+
+    return `
+      <div class="calendar-month">
+        <div class="month-title">${monthNames[month]} ${year}</div>
+        <div class="weekday-row">
+          <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+        </div>
+        <div class="days-grid">${daysHtml}</div>
+      </div>
+    `;
+  }
+
+  render() {
+    const nextMonthIdx = (this.state.currentMonth + 1) % 12;
+    const nextYearIdx = this.state.currentMonth === 11 ? this.state.currentYear + 1 : this.state.currentYear;
+
+    const month1Html = this.renderMonth(this.state.currentYear, this.state.currentMonth);
+    const month2Html = this.renderMonth(nextYearIdx, nextMonthIdx);
+
+    const quote = this.state.quote;
+
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          color: #1f2937;
+          box-sizing: border-box;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
+
+        .booking-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+          background: #ffffff;
+          border-radius: 16px;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+          padding: 1.25rem;
+          border: 1px solid #e5e7eb;
+        }
+
+        /* Nav controls */
+        .header-controls {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 0.5rem;
+          border-bottom: 1px solid #f3f4f6;
+        }
+        .property-badge {
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: #0f172a;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .nav-buttons {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .nav-btn {
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          width: 36px;
+          height: 36px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 1rem;
+          transition: all 0.2s;
+        }
+        .nav-btn:hover {
+          background: #f1f5f9;
+          border-color: #94a3b8;
+        }
+
+        /* Layout Grid */
+        .calendar-body {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .months-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .calendar-month {
+          flex: 1;
+        }
+        .month-title {
+          font-weight: 600;
+          font-size: 1rem;
+          margin-bottom: 0.75rem;
+          text-align: center;
+          color: #334155;
+        }
+        .weekday-row {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          text-align: center;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #94a3b8;
+          margin-bottom: 0.5rem;
+        }
+        .days-grid {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 4px;
+        }
+
+        /* Date cell button ergonomics */
+        .day-cell {
+          position: relative;
+          min-height: 44px;
+          min-width: 44px;
+          background: #f8fafc;
+          border: 1px solid #f1f5f9;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          font-weight: 500;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.15s ease;
+          touch-action: manipulation;
+          padding: 2px;
+          color: #334155;
+        }
+        .day-cell:hover:not(:disabled) {
+          background: #e2e8f0;
+          border-color: #cbd5e1;
+        }
+        .day-cell.empty {
+          background: transparent;
+          border: none;
+          cursor: default;
+        }
+        .day-cell.busy {
+          background: #fee2e2;
+          color: #ef4444;
+          cursor: not-allowed;
+          text-decoration: line-through;
+          opacity: 0.6;
+        }
+        .day-cell.check-in {
+          background: #2563eb;
+          color: #ffffff;
+          border-color: #1d4ed8;
+          font-weight: 700;
+        }
+        .day-cell.check-out {
+          background: #2563eb;
+          color: #ffffff;
+          border-color: #1d4ed8;
+          font-weight: 700;
+        }
+        .day-cell.in-range {
+          background: #dbeafe;
+          color: #1e40af;
+          border-color: #bfdbfe;
+        }
+        .turnover-tag {
+          font-size: 0.55rem;
+          line-height: 1;
+          margin-top: 1px;
+          text-transform: uppercase;
+        }
+
+        /* Sidebar / Quote panel */
+        .quote-sidebar {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 1.25rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .quote-header {
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: #0f172a;
+          border-bottom: 1px solid #e2e8f0;
+          padding-bottom: 0.5rem;
+        }
+        .quote-row {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.9rem;
+          color: #475569;
+        }
+        .quote-total {
+          display: flex;
+          justify-content: space-between;
+          font-weight: 700;
+          font-size: 1.2rem;
+          color: #0f172a;
+          border-top: 1px solid #e2e8f0;
+          padding-top: 0.75rem;
+        }
+        .toggle-group {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 0.85rem;
+          background: #ffffff;
+          padding: 0.5rem 0.75rem;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+        }
+        .reserve-btn {
+          background: #2563eb;
+          color: #ffffff;
+          border: none;
+          border-radius: 8px;
+          padding: 0.85rem 1rem;
+          font-weight: 700;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: background 0.2s;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .reserve-btn:hover {
+          background: #1d4ed8;
+        }
+        .reserve-btn:disabled {
+          background: #94a3b8;
+          cursor: not-allowed;
+        }
+
+        /* Responsive Breakpoints */
+        /* Tablet (iPad) */
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .months-wrapper {
+            flex-direction: row;
+          }
+          .calendar-body {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        /* Desktop / Laptop */
+        @media (min-width: 1025px) {
+          .calendar-body {
+            grid-template-columns: 2fr 1fr;
+          }
+          .months-wrapper {
+            flex-direction: row;
+          }
+          .quote-sidebar {
+            position: sticky;
+            top: 1rem;
+          }
+        }
+
+        /* Foldable & Dual-Screen Support (Surface Duo, Galaxy Fold) */
+        @media (screen-spanning: single-fold-vertical) {
+          .calendar-body {
+            display: flex;
+            width: 100vw;
+          }
+          .months-wrapper {
+            width: env(viewport-segment-width 0 0);
+            flex-direction: column;
+          }
+          .quote-sidebar {
+            width: env(viewport-segment-width 1 0);
+          }
+        }
+
+        /* Mobile iPhone/Android */
+        @media (max-width: 640px) {
+          .booking-container {
+            padding: 0.75rem;
+            padding-bottom: calc(80px + env(safe-area-inset-bottom));
+          }
+          .months-wrapper .calendar-month:nth-child(2) {
+            display: none; /* 1-month swipe view on mobile */
+          }
+          .day-cell {
+            min-height: 48px;
+            min-width: 48px;
+          }
+          .mobile-sticky-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+            z-index: 999;
+          }
+        }
+      </style>
+
+      <div class="booking-container" id="calendarRoot">
+        <div class="header-controls">
+          <div class="property-badge">
+            <span>🌿 Unit 418 Serin East Tagaytay</span>
+          </div>
+          <div class="nav-buttons">
+            <button type="button" class="nav-btn" id="prevBtn" aria-label="Previous Month">&lt;</button>
+            <button type="button" class="nav-btn" id="nextBtn" aria-label="Next Month">&gt;</button>
+          </div>
+        </div>
+
+        <div class="calendar-body">
+          <div class="months-wrapper" id="swipeArea">
+            ${month1Html}
+            ${month2Html}
+          </div>
+
+          <div class="quote-sidebar">
+            <div class="quote-header">Stay Summary</div>
+            <div class="quote-row">
+              <span>Dates:</span>
+              <span><strong>${this.state.checkInDate || 'Select'} &rarr; ${this.state.checkOutDate || 'Select'}</strong></span>
+            </div>
+            ${quote ? `
+              <div class="quote-row">
+                <span>Duration:</span>
+                <span>${quote.nights} night(s)</span>
+              </div>
+              <div class="quote-row">
+                <span>Base Rate:</span>
+                <span>₱${quote.rate.toLocaleString()} / night</span>
+              </div>
+              <div class="quote-row">
+                <span>Stay Subtotal:</span>
+                <span>₱${quote.staySubtotal.toLocaleString()}</span>
+              </div>
+              ${this.state.coveredParking ? `
+                <div class="quote-row">
+                  <span>Covered Parking (₱350/n):</span>
+                  <span>₱${quote.parkingFee.toLocaleString()}</span>
+                </div>
+              ` : ''}
+              ${quote.deposit > 0 ? `
+                <div class="quote-row">
+                  <span>Refundable Deposit:</span>
+                  <span>₱${quote.deposit.toLocaleString()}</span>
+                </div>
+              ` : `
+                <div class="quote-row" style="color: #10b981;">
+                  <span>Security Deposit:</span>
+                  <span>Waived (AirCover)</span>
+                </div>
+              `}
+              <div class="quote-total">
+                <span>Total Due:</span>
+                <span>₱${quote.totalDue.toLocaleString()}</span>
+              </div>
+            ` : `
+              <div style="font-size: 0.85rem; color: #64748b; font-style: italic;">
+                Select check-in and check-out dates to compute your guaranteed direct stay quote.
+              </div>
+            `}
+
+            <div class="toggle-group">
+              <label for="parkingToggle">Covered Parking (Slot B-18)</label>
+              <input type="checkbox" id="parkingToggle" ${this.state.coveredParking ? 'checked' : ''} />
+            </div>
+
+            <button type="button" class="reserve-btn" id="reserveBtn" ${!quote ? 'disabled' : ''}>
+              Reserve Unit 418
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mobile-sticky-bar" style="display: none;">
+        <div>
+          <div style="font-size: 0.75rem; color: #64748b;">Total Price</div>
+          <div style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">
+            ${quote ? `₱${quote.totalDue.toLocaleString()}` : '₱3,340 / night'}
+          </div>
+        </div>
+        <button type="button" class="reserve-btn" id="mobileReserveBtn" ${!quote ? 'disabled' : ''} style="padding: 0.6rem 1.2rem;">
+          Reserve
+        </button>
+      </div>
+    `;
+
+    this.attachDynamicListeners();
+  }
+
+  attachEventListeners() {
+    this.shadowRoot.addEventListener('click', (e) => {
+      const dayBtn = e.target.closest('.day-cell[data-date]');
+      if (dayBtn && !dayBtn.disabled) {
+        this.selectDate(dayBtn.dataset.date);
+      }
+    });
+
+    // Touch swipe support for mobile
+    const root = this.shadowRoot.getElementById('calendarRoot');
+    if (root) {
+      root.addEventListener('touchstart', (e) => {
+        this.touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      root.addEventListener('touchend', (e) => {
+        this.touchEndX = e.changedTouches[0].screenX;
+        const diff = this.touchEndX - this.touchStartX;
+        if (Math.abs(diff) > 50) {
+          if (diff < 0) this.nextMonth();
+          else this.prevMonth();
+        }
+      }, { passive: true });
+    }
+  }
+
+  attachDynamicListeners() {
+    const prevBtn = this.shadowRoot.getElementById('prevBtn');
+    const nextBtn = this.shadowRoot.getElementById('nextBtn');
+    const parkingToggle = this.shadowRoot.getElementById('parkingToggle');
+    const reserveBtn = this.shadowRoot.getElementById('reserveBtn');
+    const mobileReserveBtn = this.shadowRoot.getElementById('mobileReserveBtn');
+
+    if (prevBtn) prevBtn.onclick = () => this.prevMonth();
+    if (nextBtn) nextBtn.onclick = () => this.nextMonth();
+    if (parkingToggle) {
+      parkingToggle.onchange = (e) => {
+        this.state.coveredParking = e.target.checked;
+        this.recalculateQuote();
+        this.render();
+      };
+    }
+    if (reserveBtn) reserveBtn.onclick = () => this.submitBooking();
+    if (mobileReserveBtn) mobileReserveBtn.onclick = () => this.submitBooking();
+  }
+}
+
+if (typeof customElements !== 'undefined' && !customElements.get('condo-booking-calendar')) {
+  customElements.define('condo-booking-calendar', CondoBookingCalendar);
+}
+</script>
