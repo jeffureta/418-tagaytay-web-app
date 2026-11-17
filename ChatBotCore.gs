@@ -26,50 +26,50 @@ var ChatBotSdk = (function() {
       "options": [
         {
           "id": "opt_booking",
-          "label": "📅 How much are the rates",
-          "icon": "📅",
+          "label": "How much are the rates",
+          "icon": "",
           "target": "menu_booking",
           "tier": "unbooked"
         },
         {
           "id": "opt_parking",
-          "label": "🚗 Parking details",
-          "icon": "🚗",
+          "label": "Parking details",
+          "icon": "",
           "target": "res_parking",
           "tier": "unbooked"
         },
         {
           "id": "opt_checkin",
-          "label": "🔑 Check-In & Smart Lock Code",
-          "icon": "🔑",
+          "label": "Check-In & Smart Lock Code",
+          "icon": "",
           "target": "res_checkin",
           "tier": "confirmed"
         },
         {
           "id": "opt_endorsement",
-          "label": "📋 Admin Endorsement (Carrd Link)",
-          "icon": "📋",
+          "label": "Admin Endorsement (Carrd Link)",
+          "icon": "",
           "target": "res_endorsement",
           "tier": "confirmed"
         },
         {
           "id": "opt_rules",
-          "label": "🍳 Kitchen & House Rules",
-          "icon": "🍳",
+          "label": "Kitchen & House Rules",
+          "icon": "",
           "target": "res_rules",
           "tier": "confirmed"
         },
         {
           "id": "opt_amenities",
-          "label": "🏊 Pool, Wi-Fi & Appliances",
-          "icon": "🏊",
+          "label": "Pool, Wi-Fi & Appliances",
+          "icon": "",
           "target": "res_amenities",
           "tier": "confirmed"
         },
         {
           "id": "opt_contact",
-          "label": "📞 Contact Host & Caretaker",
-          "icon": "📞",
+          "label": "Contact Host & Caretaker",
+          "icon": "",
           "target": "res_contact",
           "tier": "confirmed"
         }
@@ -82,26 +82,26 @@ var ChatBotSdk = (function() {
       "options": [
         {
           "id": "sub_direct",
-          "label": "🏷️ Direct Booking Rates",
-          "icon": "🏷️",
+          "label": "Direct Booking Rates",
+          "icon": "",
           "target": "res_booking_direct"
         },
         {
           "id": "sub_ota",
-          "label": "🌐 Airbnb, Agoda & Booking.com",
-          "icon": "🌐",
+          "label": "Airbnb, Agoda & Booking.com",
+          "icon": "",
           "target": "res_booking_ota"
         },
         {
           "id": "sub_deposit",
-          "label": "💵 Security Deposit Policy",
-          "icon": "💵",
+          "label": "Security Deposit Policy",
+          "icon": "",
           "target": "res_booking_deposit"
         },
         {
           "id": "back_root",
-          "label": "⬅️ Back to Main Menu",
-          "icon": "⬅️",
+          "label": "Back to Main Menu",
+          "icon": "",
           "target": "root"
         }
       ]
@@ -121,7 +121,7 @@ var ChatBotSdk = (function() {
           }
         },
         {
-          "label": "⬅️ Back to Menu",
+          "label": "Back to Menu",
           "actionType": "navigate",
           "target": "root"
         }
@@ -133,12 +133,12 @@ var ChatBotSdk = (function() {
       "text": "🔑 **Standard Hours & Smart Lock Access**:\n\n• **Check-In**: 2:00 PM (14:00)\n• **Check-Out**: 12:00 NN (12:00)\n• **Caretaker Turnover Window**: 12:00 NN – 2:00 PM\n\n🔒 **Smart Lock PIN Release Gate**:\nYour unique 6-digit smart lock PIN is generated specifically for your reservation and is released **on your check-in day upon arrival**, once:\n1. Your building endorsement is submitted and verified via the Carrd link.\n2. The caretaker has completed the 12NN–2PM sanitization and unit setup.",
       "actions": [
         {
-          "label": "📋 Open Endorsement Carrd",
+          "label": "Open Endorsement Carrd",
           "actionType": "link",
           "url": "https://serineasttagaytayendorsement.carrd.co/"
         },
         {
-          "label": "⬅️ Back to Menu",
+          "label": "Back to Menu",
           "actionType": "navigate",
           "target": "root"
         }
@@ -150,12 +150,12 @@ var ChatBotSdk = (function() {
       "text": "📋 **Mandatory Serin East Building Administration Endorsement**:\n\nPer Serin East Tagaytay condominium security rules, all incoming guests must be officially endorsed before lobby entry.\n\n🔗 **Submission Link**: [serineasttagaytayendorsement.carrd.co](https://serineasttagaytayendorsement.carrd.co/)\n\n**Required Requirements**:\n1. One (1) Valid Government-issued ID of the Primary Guest.\n2. Full complete names of all accompanying guests.\n3. One (1) active mobile contact number.\n4. Vehicle plate & model details (if booking the ₱350/night covered parking slot).",
       "actions": [
         {
-          "label": "🔗 Submit Endorsement Now",
+          "label": "Submit Endorsement Now",
           "actionType": "link",
           "url": "https://serineasttagaytayendorsement.carrd.co/"
         },
         {
-          "label": "⬅️ Back to Menu",
+          "label": "Back to Menu",
           "actionType": "navigate",
           "target": "root"
         }
@@ -167,7 +167,7 @@ var ChatBotSdk = (function() {
       "text": "🍳 **Kitchen & House Rules for Unit 418**:\n\n• **Light Cooking**: Allowed! The kitchen is equipped with an induction cooktop, range hood, microwave, refrigerator, rice cooker, electric kettle, and cookware/utensils.\n• **Strict No-Smelly-Frying Rule**: Strictly **no frying of dried fish (tuyo, daing, tinapa)** or strong pungent foods to preserve unit freshness for incoming guests.\n• **Smoking & Vaping**: Strictly prohibited inside the unit and balcony per condominium regulations.\n• **Quiet Hours**: 10:00 PM to 8:00 AM.",
       "actions": [
         {
-          "label": "⬅️ Back to Menu",
+          "label": "Back to Menu",
           "actionType": "navigate",
           "target": "root"
         }
@@ -179,7 +179,7 @@ var ChatBotSdk = (function() {
       "text": "🏊 **Amenities & Appliances**:\n\n• **Fiber Wi-Fi**: High-speed internet throughout the 2BR suite.\n• **Entertainment**: Smart TV with Netflix access.\n• **Bathroom**: Hot and cold shower heater + fresh guest towels.\n• **Swimming Pool**: Serin East outdoor pool access is managed by the building administration. Guest pool passes are paid directly to the admin office on the day of use.\n• **Air Conditioning**: Air-conditioned bedrooms and living area.",
       "actions": [
         {
-          "label": "⬅️ Back to Menu",
+          "label": "Back to Menu",
           "actionType": "navigate",
           "target": "root"
         }
@@ -191,7 +191,7 @@ var ChatBotSdk = (function() {
       "text": "📞 **Need immediate assistance?**\n\n• Our on-site caretaker coordinates unit preparation and turnovers between 12:00 NN and 2:00 PM.\n• You can reach host management directly via Messenger, Viber, WhatsApp, or phone call once your booking is confirmed.",
       "actions": [
         {
-          "label": "⬅️ Back to Menu",
+          "label": "Back to Menu",
           "actionType": "navigate",
           "target": "root"
         }
@@ -203,14 +203,14 @@ var ChatBotSdk = (function() {
       "text": "🏷️ **Direct Booking Advantage**:\n\nBook directly through our website to secure instant reservation confirmation with no platform service fees!\n\n• **Payment Channels**: BDO / BPI Philippine Bank Transfer or GCash.\n• **Security Deposit**: ₱3,000 refundable security deposit (refunded promptly after checkout inspection).",
       "actions": [
         {
-          "label": "💬 Inquire for Dates",
+          "label": "Inquire for Dates",
           "actionType": "lead",
           "payload": {
             "service": "direct_quote"
           }
         },
         {
-          "label": "⬅️ Back to Booking Menu",
+          "label": "Back to Booking Menu",
           "actionType": "navigate",
           "target": "menu_booking"
         }
@@ -222,7 +222,7 @@ var ChatBotSdk = (function() {
       "text": "🌐 **We are also listed on major booking platforms**:\n\n• **Airbnb**: Instant booking with PayPal / Credit Card and Airbnb AirCover protection.\n• **Agoda & Booking.com**: Philippine bank and card payments accepted. (Note: Agoda direct bookings require a ₱3,000 refundable security deposit at check-in).",
       "actions": [
         {
-          "label": "⬅️ Back to Booking Menu",
+          "label": "Back to Booking Menu",
           "actionType": "navigate",
           "target": "menu_booking"
         }
@@ -234,7 +234,7 @@ var ChatBotSdk = (function() {
       "text": "💵 **Security Deposit Policies by Channel**:\n\n• **Direct Bookings & Agoda**: A **₱3,000 refundable security deposit** is collected upon check-in. This is refunded in full post-checkout once the caretaker completes the inventory inspection.\n• **Airbnb**: Covered under Airbnb AirCover protection (no upfront cash deposit collected).",
       "actions": [
         {
-          "label": "⬅️ Back to Booking Menu",
+          "label": "Back to Booking Menu",
           "actionType": "navigate",
           "target": "menu_booking"
         }
