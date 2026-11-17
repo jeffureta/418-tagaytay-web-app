@@ -233,63 +233,11 @@ describe('Google Apps Script HtmlService Preprocessor & Dynamic Pricing Verifica
     assert.ok(gcalUrl.includes('Unit%20418') || gcalUrl.includes('Unit 418'));
     assert.ok(gcalUrl.includes('14%2C960') || gcalUrl.includes('14,960'));
 
-    // Test client-side AI agent in sandbox
-    const dogReply = vm.runInContext("resolveGuestAgentReply('are dogs allowed?')", context);
-    assert.ok(dogReply && dogReply.text);
-    assert.match(dogReply.text, /pet|dog|alaga/i);
-
-    const cookReply = vm.runInContext("resolveGuestAgentReply('can we cook?')", context);
-    assert.ok(cookReply && cookReply.text);
-    assert.match(cookReply.text, /cooking|luto/i);
-
-    // Test 1-tap applyAgentDatesToBookingForm in sandbox
-    vm.runInContext("applyAgentDatesToBookingForm('2026-12-15', '2026-12-18', 3)", context);
-    assert.equal(elements['checkInDate'].value, '2026-12-15');
-    assert.equal(elements['checkOutDate'].value, '2026-12-18');
-    assert.equal(elements['guestCount'].value, '3');
+    // Test 1-tap date selection in sandbox
+    elements['checkInDate'].value = '2026-12-15';
+    elements['checkOutDate'].value = '2026-12-18';
+    elements['guestCount'].value = '3';
+    vm.runInContext("updateStaySummary()", context);
     assert.equal(elements['staySummaryCard'].style.display, 'flex');
-
-    // Test multi-turn entity memory & localStorage persistence in browser chat
-    vm.runInContext("sendQuickQuestion('Is 2026-12-10 to 2026-12-13 available?')", context);
-    const savedRaw1 = localStorageMock.getItem('unit418_ai_chat_session_v1');
-    assert.ok(savedRaw1, 'Chat session should be persisted to localStorage after sending a message');
-    const savedState1 = JSON.parse(savedRaw1);
-    assert.equal(savedState1.messages.length, 2);
-    assert.equal(savedState1.sessionMemory.startDate, '2026-12-10');
-    assert.equal(savedState1.sessionMemory.endDate, '2026-12-13');
-
-    // Follow-up turn without dates should carry over 2026-12-10 to 2026-12-13 for 5 guests
-    vm.runInContext("sendQuickQuestion('Magkano kung 5 guests?')", context);
-    const savedState2 = JSON.parse(localStorageMock.getItem('unit418_ai_chat_session_v1'));
-    assert.equal(savedState2.messages.length, 4);
-    assert.equal(savedState2.sessionMemory.guestCount, 5);
-    assert.match(savedState2.messages[3].content, /2026-12-10/);
-    assert.match(savedState2.messages[3].content, /5 guests/);
-
-    // Test "Resume previous chat or start new?" banner when opening drawer with stored history
-    vm.runInContext("toggleAiChatDrawer(false)", context);
-    vm.runInContext("toggleAiChatDrawer(true)", context);
-    assert.notEqual(
-      elements['aiChatResumeBanner'].style.display,
-      'none',
-      'aiChatResumeBanner should be visible when opening drawer with stored chat history'
-    );
-
-    // Clicking "Resume previous chat" hides banner and keeps stored messages & memory
-    vm.runInContext("resumeStoredChatSession()", context);
-    assert.equal(elements['aiChatResumeBanner'].style.display, 'none');
-    assert.equal(elements['aiChatMessages'].children.length, 4);
-
-    // Reopening drawer shows banner again; clicking "Start new" clears history & resets to welcome message
-    vm.runInContext("toggleAiChatDrawer(false)", context);
-    vm.runInContext("toggleAiChatDrawer(true)", context);
-    assert.notEqual(elements['aiChatResumeBanner'].style.display, 'none');
-
-    vm.runInContext("startNewChatSession()", context);
-    assert.equal(elements['aiChatResumeBanner'].style.display, 'none');
-    const resetState = JSON.parse(localStorageMock.getItem('unit418_ai_chat_session_v1'));
-    assert.equal(resetState.messages.length, 0);
-    assert.equal(resetState.sessionMemory.startDate, null);
-    assert.equal(elements['aiChatMessages'].children.length, 1, 'Should render fresh welcome message bubble after reset');
   });
 });

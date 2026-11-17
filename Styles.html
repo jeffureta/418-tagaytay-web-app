@@ -442,18 +442,21 @@
     color: var(--text-muted);
   }
 
-  /* Client-Side AI Guest-Relations Concierge Widget */
-  .ai-chat-launcher {
+  /* ==========================================================================
+     418 Serin Tagaytay Chatbot Widget - 5-Tier Responsive Architecture
+     ========================================================================== */
+
+  .condo-chatbot-launcher {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    min-height: 50px;
-    padding: 10px 18px;
+    min-height: 48px;
+    padding: 10px 20px;
     background: #0f172a;
     color: #ffffff;
     border: 1.5px solid #334155;
     border-radius: 9999px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     font-size: 14px;
@@ -464,83 +467,66 @@
     transition: transform 0.2s ease, background 0.2s ease;
   }
 
-  .ai-chat-launcher:hover {
+  .condo-chatbot-launcher:hover {
     background: #1e293b;
     transform: translateY(-2px);
   }
 
-  .ai-chat-launcher:focus {
+  .condo-chatbot-launcher:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.4);
   }
 
-  .ai-launcher-icon {
-    font-size: 18px;
-  }
-
-  .ai-chat-drawer {
+  .condo-chatbot-container {
     position: fixed;
     bottom: 80px;
     right: 20px;
     width: 380px;
     max-width: calc(100vw - 32px);
-    height: 520px;
+    height: 540px;
     max-height: calc(100vh - 100px);
     background: #ffffff;
     border: 1.5px solid var(--border);
     border-radius: 16px;
     box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.2);
-    display: flex;
+    display: none;
     flex-direction: column;
     z-index: 1001;
     overflow: hidden;
   }
 
-  .ai-chat-header {
+  .condo-chatbot-container.is-open {
+    display: flex;
+  }
+
+  .chatbot-header {
     background: #0f172a;
     color: #ffffff;
     padding: 14px 16px;
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-
-  .ai-header-badge-row {
-    display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
+    justify-content: space-between;
+    border-bottom: 1px solid #1e293b;
   }
 
-  .ai-status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #22c55e;
-    display: inline-block;
-  }
-
-  .ai-header-badge {
-    font-size: 10px;
-    font-weight: 700;
-    color: #38bdf8;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .ai-chat-title {
+  .chatbot-header h3 {
     font-size: 16px;
     font-weight: 700;
     margin: 0;
     color: #ffffff;
   }
 
-  .ai-chat-subtitle {
+  .chatbot-header .engine-badge {
     font-size: 11px;
-    color: #94a3b8;
+    font-weight: 600;
+    background: #1e293b;
+    color: #38bdf8;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    border: 1px solid #334155;
   }
 
-  .ai-chat-close-btn {
+  .chatbot-close-btn {
     background: transparent;
     border: none;
     color: #94a3b8;
@@ -552,69 +538,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s, color 0.15s;
   }
 
-  .ai-chat-close-btn:hover {
-    background: #1e293b;
+  .chatbot-close-btn:hover {
     color: #ffffff;
   }
 
-  .ai-chat-resume-banner {
-    background: #eff6ff;
-    border-bottom: 1px solid #bfdbfe;
-    padding: 10px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .ai-resume-text {
-    font-size: 12px;
-    color: #1e3a8a;
-    line-height: 1.4;
-  }
-
-  .ai-resume-actions {
-    display: flex;
-    gap: 8px;
-  }
-
-  .ai-resume-btn {
-    flex: 1;
-    min-height: 44px;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s ease;
-  }
-
-  .ai-resume-btn-primary {
-    background: #0284c7;
-    color: #ffffff;
-    border: none;
-  }
-
-  .ai-resume-btn-primary:hover {
-    background: #0369a1;
-  }
-
-  .ai-resume-btn-secondary {
-    background: #ffffff;
-    color: #1e293b;
-    border: 1px solid #cbd5e1;
-  }
-
-  .ai-resume-btn-secondary:hover {
-    background: #f1f5f9;
-  }
-
-  .ai-chat-messages {
+  .chatbot-messages {
     flex: 1;
     overflow-y: auto;
     padding: 14px;
@@ -624,21 +554,10 @@
     background: #f8fafc;
   }
 
-  .ai-msg {
+  .chatbot-messages .message {
     display: flex;
     flex-direction: column;
     max-width: 88%;
-  }
-
-  .ai-msg-user {
-    align-self: flex-end;
-  }
-
-  .ai-msg-bot {
-    align-self: flex-start;
-  }
-
-  .ai-msg-bubble {
     padding: 10px 14px;
     border-radius: 12px;
     font-size: 13px;
@@ -646,13 +565,15 @@
     word-break: break-word;
   }
 
-  .ai-msg-user .ai-msg-bubble {
+  .chatbot-messages .message.guest {
+    align-self: flex-end;
     background: var(--primary);
     color: #ffffff;
     border-bottom-right-radius: 2px;
   }
 
-  .ai-msg-bot .ai-msg-bubble {
+  .chatbot-messages .message.bot {
+    align-self: flex-start;
     background: #ffffff;
     color: #0f172a;
     border: 1px solid #e2e8f0;
@@ -660,44 +581,21 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
-  .ai-apply-booking-btn {
-    margin-top: 8px;
-    background: #047857;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.15s ease;
-    min-height: 44px;
-  }
-
-  .ai-apply-booking-btn:hover {
-    background: #065f46;
-  }
-
-  .ai-quick-chips {
+  .chatbot-quick-actions {
     display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 8px 12px;
+    gap: 8px;
+    padding: 10px 12px;
     background: #ffffff;
     border-top: 1px solid #f1f5f9;
     border-bottom: 1px solid #f1f5f9;
-    white-space: nowrap;
   }
 
-  .ai-chip-btn {
+  .chatbot-quick-actions .option-btn {
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
     border-radius: 9999px;
-    padding: 6px 12px;
-    font-size: 11px;
+    padding: 6px 14px;
+    font-size: 12px;
     font-weight: 600;
     color: #334155;
     cursor: pointer;
@@ -705,32 +603,33 @@
     min-height: 44px;
     display: inline-flex;
     align-items: center;
+    white-space: nowrap;
   }
 
-  .ai-chip-btn:hover {
+  .chatbot-quick-actions .option-btn:hover {
     background: #e2e8f0;
     color: #0f172a;
   }
 
-  .ai-chat-form {
+  .chatbot-input-bar {
     display: flex;
     padding: 10px;
     background: #ffffff;
     gap: 8px;
   }
 
-  .ai-chat-input {
+  .chatbot-input-bar input {
     flex: 1;
     min-height: 48px;
     padding: 8px 12px;
-    font-size: 16px;
+    font-size: 14px;
     border: 1.5px solid var(--border);
     border-radius: 8px;
   }
 
-  .ai-chat-send-btn {
+  .chatbot-input-bar button {
     min-height: 48px;
-    min-width: 58px;
+    min-width: 64px;
     background: var(--primary);
     color: #ffffff;
     border: none;
@@ -740,37 +639,93 @@
     cursor: pointer;
   }
 
-  .ai-chat-send-btn:hover {
+  .chatbot-input-bar button:hover {
     background: var(--primary-hover);
   }
 
-  @media (max-width: 480px) {
-    .ai-chat-drawer {
+  /* --------------------------------------------------------------------------
+     5 Responsive Form Factor Viewports
+     -------------------------------------------------------------------------- */
+
+  /* 1. Cellphones (<640px) */
+  @media (max-width: 640px) {
+    .condo-chatbot-container {
       bottom: 0;
       right: 0;
       width: 100vw;
       max-width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      max-height: 100vh;
-      max-height: 100dvh;
-      border-radius: 0;
+      height: 85vh;
+      height: 85dvh;
+      max-height: 85vh;
+      border-radius: 16px 16px 0 0;
     }
 
-    .ai-chat-form {
+    .chatbot-quick-actions {
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chatbot-quick-actions .option-btn {
+      min-height: 48px;
+    }
+
+    .chatbot-input-bar {
       padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .chatbot-input-bar input,
+    .chatbot-input-bar button {
+      min-height: 48px;
     }
   }
 
-  /* Responsive Adaptation for AI Concierge Chat Drawer on Tablets/Laptops/Desktops */
-  @media (min-width: 768px) {
-    .ai-chat-drawer {
+  /* 2. Foldables (dual-screen spanning hinge) */
+  @media (screen-spanning: single-fold-vertical) {
+    .condo-chatbot-container {
+      width: env(viewport-segment-width 1 0, 380px);
+      max-width: calc(100vw - env(viewport-segment-width 0 0, 0px));
+    }
+  }
+
+  /* 3. Tablets (641px - 1024px) */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .condo-chatbot-container {
       width: 380px;
       height: 560px;
+      right: 20px;
+      bottom: 20px;
+      border-radius: 16px;
+    }
+
+    .chatbot-quick-actions {
+      flex-wrap: wrap;
+    }
+  }
+
+  /* 4. Laptops (1025px - 1439px) */
+  @media (min-width: 1025px) {
+    .condo-chatbot-container {
+      width: 380px;
+      height: 600px;
       right: 24px;
       bottom: 24px;
       border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .chatbot-quick-actions {
+      flex-wrap: wrap;
+    }
+  }
+
+  /* 5. Desktops (>=1440px) */
+  @media (min-width: 1440px) {
+    .condo-chatbot-container {
+      width: 400px;
+      max-width: 420px;
+      height: 640px;
+      right: 32px;
+      bottom: 32px;
     }
   }
 

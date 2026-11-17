@@ -10,6 +10,7 @@
     "test:e2e": "playwright test",
     "test:all": "npm test && npm run test:e2e",
     "sync:pricing": "node scripts/sync-db-pricing.js",
+    "sync:chatbot": "node scripts/sync-chatbot.js",
     "clasp:status": "clasp status",
     "clasp:push": "clasp push",
     "clasp:deploy": "clasp deploy",

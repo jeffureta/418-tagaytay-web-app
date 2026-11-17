@@ -40,10 +40,10 @@ describe('Universal Responsive Viewports & QR Guide Contracts (TDD)', () => {
       assert.match(rawStyles, /@media\s*\(\s*min-width:\s*1440px\s*\)/, 'Should contain wide desktop min-width: 1440px breakpoint');
     });
 
-    test('Styles.html adapts AI Concierge chat widget between bottom drawer and floating docked card', () => {
+    test('Styles.html adapts Chatbot widget across 5 responsive tiers', () => {
       // Mobile drawer vs Desktop docked
-      assert.match(rawStyles, /\.ai-chat-drawer\s*\{[^}]*position:\s*fixed/, 'ai-chat-drawer must be fixed');
-      assert.match(rawStyles, /@media\s*\(\s*min-width:\s*768px\s*\)\s*\{[\s\S]*\.ai-chat-drawer\s*\{[\s\S]*width:\s*380px/, 'Tablet/desktop must style drawer as floating docked card');
+      assert.match(rawStyles, /\.condo-chatbot-container\s*\{[^}]*position:\s*fixed/, 'condo-chatbot-container must be fixed');
+      assert.match(rawStyles, /@media\s*\(\s*min-width:\s*641px\s*\)\s*and\s*\(\s*max-width:\s*1024px\s*\)\s*\{[\s\S]*\.condo-chatbot-container\s*\{[\s\S]*width:\s*380px/, 'Tablet/desktop must style drawer as floating docked card');
     });
   });
 
