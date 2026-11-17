@@ -26,9 +26,9 @@ var ChatBotSdk = (function() {
       "options": [
         {
           "id": "opt_booking",
-          "label": "How much are the rates",
+          "label": "Book a stay",
           "icon": "",
-          "target": "menu_booking",
+          "target": "menu_book_stay",
           "tier": "unbooked"
         },
         {
@@ -36,7 +36,7 @@ var ChatBotSdk = (function() {
           "label": "Parking details",
           "icon": "",
           "target": "res_parking",
-          "tier": "unbooked"
+          "tier": "confirmed"
         },
         {
           "id": "opt_checkin",
@@ -75,6 +75,68 @@ var ChatBotSdk = (function() {
         }
       ]
     },
+    "menu_book_stay": {
+      "id": "menu_book_stay",
+      "title": "Book a stay at Unit 418",
+      "message": "Welcome! Unit 418 is a premier 70sqm 2-Bedroom suite in Serin East Tagaytay (beside Ayala Malls Serin). When are you planning to visit?",
+      "options": [
+        {
+          "id": "sub_dates_weekend",
+          "label": "This upcoming weekend",
+          "icon": "",
+          "target": "menu_book_guests"
+        },
+        {
+          "id": "sub_dates_weekday",
+          "label": "Weekday staycation",
+          "icon": "",
+          "target": "menu_book_guests"
+        },
+        {
+          "id": "sub_dates_custom",
+          "label": "I have specific dates in mind",
+          "icon": "",
+          "target": "menu_book_guests"
+        },
+        {
+          "id": "back_root",
+          "label": "Back to Main Menu",
+          "icon": "",
+          "target": "root"
+        }
+      ]
+    },
+    "menu_book_guests": {
+      "id": "menu_book_guests",
+      "title": "Guest Capacity",
+      "message": "Unit 418 features 2 private bedrooms, a fully equipped kitchen, hot shower, and high-speed Wi-Fi. How many guests will be staying?",
+      "options": [
+        {
+          "id": "sub_guests_small",
+          "label": "1 to 2 Guests (Couple / Solo)",
+          "icon": "",
+          "target": "res_book_checkout"
+        },
+        {
+          "id": "sub_guests_family",
+          "label": "3 to 4 Guests (Small Family)",
+          "icon": "",
+          "target": "res_book_checkout"
+        },
+        {
+          "id": "sub_guests_group",
+          "label": "5 to 6 Guests (Maximum Group)",
+          "icon": "",
+          "target": "res_book_checkout"
+        },
+        {
+          "id": "back_dates",
+          "label": "Back to Dates",
+          "icon": "",
+          "target": "menu_book_stay"
+        }
+      ]
+    },
     "menu_booking": {
       "id": "menu_booking",
       "title": "Booking & Staycation Rates",
@@ -108,6 +170,30 @@ var ChatBotSdk = (function() {
     }
   },
   "resolutions": {
+    "res_book_checkout": {
+      "id": "res_book_checkout",
+      "title": "Unit 418 Direct Stay Summary & Checkout",
+      "text": "✨ **Your Unit 418 Tagaytay Stay Summary**:\n\n• **Accommodation**: 2-Bedroom Suite (70 sqm), 2 Baths, Living Room & Balcony.\n• **Inclusions**: High-Speed Fiber Wi-Fi, Smart TV with Netflix, Induction Stove & Microwave for light cooking, Hot/Cold Shower.\n• **Direct Booking Advantage**: Zero OTA service fees + instant booking confirmation.\n• **Check-In/Out**: 2:00 PM check-in / 12:00 NN check-out.\n• **Optional Parking**: Covered tower slot at ₱350/night.\n\nReady to reserve? Click below to proceed to checkout and lock in your stay!",
+      "actions": [
+        {
+          "label": "Proceed to Checkout",
+          "actionType": "checkout",
+          "payload": {
+            "service": "direct_checkout"
+          }
+        },
+        {
+          "label": "Modify Dates or Guests",
+          "actionType": "navigate",
+          "target": "menu_book_stay"
+        },
+        {
+          "label": "Back to Main Menu",
+          "actionType": "navigate",
+          "target": "root"
+        }
+      ]
+    },
     "res_parking": {
       "id": "res_parking",
       "title": "Parking Information",
