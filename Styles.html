@@ -467,6 +467,10 @@
     transition: transform 0.2s ease, background 0.2s ease;
   }
 
+  .condo-chatbot-launcher.is-hidden {
+    display: none !important;
+  }
+
   .condo-chatbot-launcher:hover {
     background: #1e293b;
     transform: translateY(-2px);
@@ -507,6 +511,12 @@
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid #1e293b;
+  }
+
+  .chatbot-header .chatbot-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
   }
 
   .chatbot-header h3 {
@@ -583,10 +593,11 @@
 
   .chatbot-quick-actions {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 12px 14px;
     background: #ffffff;
-    border-top: 1px solid #f1f5f9;
     border-bottom: 1px solid #f1f5f9;
   }
 
@@ -594,16 +605,19 @@
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
     border-radius: 9999px;
-    padding: 6px 14px;
-    font-size: 12px;
+    padding: 8px 16px;
+    font-size: 13px;
     font-weight: 600;
     color: #334155;
     cursor: pointer;
     transition: all 0.15s ease;
-    min-height: 44px;
+    min-height: 40px;
     display: inline-flex;
     align-items: center;
-    white-space: nowrap;
+    text-align: left;
+    white-space: normal;
+    width: auto;
+    max-width: 100%;
   }
 
   .chatbot-quick-actions .option-btn:hover {
