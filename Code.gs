@@ -85,6 +85,18 @@ function doPost(e) {
     result.data = { refId: payload.refId, pin: payload.pin || '654321', released: true };
   } else if (action === 'syncPush') {
     result.data = { updated: (payload.reservations || []).length };
+  } else if (action === 'gcalCreateEvent') {
+    result.data = typeof gcalCreateBookingEvent === 'function' ? gcalCreateBookingEvent(payload.reservation || payload) : { success: false, message: 'gcalCreateBookingEvent not loaded' };
+    result.success = result.data.success;
+  } else if (action === 'gcalUpdateEvent') {
+    result.data = typeof gcalUpdateBookingEvent === 'function' ? gcalUpdateBookingEvent(payload.eventId, payload.reservation || payload) : { success: false, message: 'gcalUpdateBookingEvent not loaded' };
+    result.success = result.data.success;
+  } else if (action === 'gcalDeleteEvent') {
+    result.data = typeof gcalDeleteBookingEvent === 'function' ? gcalDeleteBookingEvent(payload.eventId, payload.refId) : { success: false, message: 'gcalDeleteBookingEvent not loaded' };
+    result.success = result.data.success;
+  } else if (action === 'gcalListEvents') {
+    result.data = typeof gcalListEvents === 'function' ? gcalListEvents(payload.from, payload.to) : { success: false, events: [] };
+    result.success = result.data.success;
   } else {
     result.data = { received: true };
   }
